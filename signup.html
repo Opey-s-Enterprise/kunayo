@@ -3,82 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Page</title>
+    <title>Sign Up</title>
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
-        
+
         .container {
             max-width: 400px;
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
-        
+
         h2 {
             text-align: center;
         }
-        
+
         label {
-            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
         }
-        
-        input[type="text"], input[type="password"] {
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 3px;
         }
-        
+
         input[type="checkbox"] {
             margin-right: 5px;
         }
-        
-        button[type="submit"] {
+
+        .terms-label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        #signup-btn {
             width: 100%;
             padding: 10px;
-            background-color: #ccc; /* Muted color */
+            background-color: #007bff;
             color: #fff;
             border: none;
             border-radius: 3px;
-            cursor: not-allowed; /* Default cursor */
+            cursor: pointer;
         }
-        
-        /* Style the button when the checkbox is checked */
-        input[type="checkbox"]:checked + button[type="submit"] {
-            background-color: #007bff; /* Active color when checkbox is checked */
-            cursor: pointer; /* Change cursor to pointer when active */
+
+        #signup-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Signup</h2>
-        <form>
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
-            
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
-            
+
             <label>
-                <input type="checkbox" id="terms" name="terms" required>
-                I agree to the Terms and Conditions
+                <input type="checkbox" id="agree" required>
+                I agree to the <a href="#">Terms and Conditions</a>
             </label>
-            
+
             <button type="submit" id="signup-btn" disabled>Sign Up</button>
         </form>
     </div>
-    
+
     <script>
-        // Enable the signup button when the checkbox is checked
-        document.getElementById("terms").addEventListener("change", function() {
-            const signupButton = document.getElementById("signup-btn");
+        const agreeCheckbox = document.getElementById('agree');
+        const signupButton = document.getElementById('signup-btn');
+
+        agreeCheckbox.addEventListener('change', function () {
             signupButton.disabled = !this.checked;
         });
     </script>
