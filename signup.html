@@ -63,6 +63,34 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+
+        /* Pop-up styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            max-width: 80%;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -80,19 +108,43 @@
 
             <label>
                 <input type="checkbox" id="agree" required>
-                I agree to the <a href="#">Terms and Conditions</a>
+                I agree to the <a href="#" id="terms-link">Terms and Conditions</a>
             </label>
 
             <button type="submit" id="signup-btn" disabled>Sign Up</button>
         </form>
     </div>
 
+    <!-- Pop-up HTML -->
+    <div class="popup" id="terms-popup">
+        <div class="popup-content">
+            <span class="popup-close" id="close-popup">X</span>
+            <!-- Add your Terms and Conditions content here -->
+            <h3>Terms and Conditions</h3>
+            <p>This is the terms and conditions text.</p>
+        </div>
+    </div>
+
     <script>
         const agreeCheckbox = document.getElementById('agree');
         const signupButton = document.getElementById('signup-btn');
+        const termsLink = document.getElementById('terms-link');
+        const termsPopup = document.getElementById('terms-popup');
+        const closePopupButton = document.getElementById('close-popup');
 
         agreeCheckbox.addEventListener('change', function () {
             signupButton.disabled = !this.checked;
+        });
+
+        // Show the terms pop-up when the link is clicked
+        termsLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            termsPopup.style.display = 'block';
+        });
+
+        // Close the terms pop-up when the close button is clicked
+        closePopupButton.addEventListener('click', function () {
+            termsPopup.style.display = 'none';
         });
     </script>
 </body>
