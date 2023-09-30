@@ -42,11 +42,16 @@
         button[type="submit"] {
             width: 100%;
             padding: 10px;
-            background-color: #007bff;
+            background-color: #ccc; /* Initial muted color */
             color: #fff;
             border: none;
             border-radius: 3px;
             cursor: pointer;
+        }
+        
+        /* Style the button when the checkbox is checked */
+        input[type="checkbox"]:checked + button[type="submit"] {
+            background-color: #007bff; /* Active color when checkbox is checked */
         }
     </style>
 </head>
