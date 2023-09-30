@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .footer-menu {
+            margin-top: 10px;
+        }
+
+        .footer-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-menu li {
+            margin: 5px 0;
+        }
+
+        /* Responsive Styles */
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .footer-menu {
+                margin-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <footer>
+        <div class="container">
+            <div class="footer-logo">Your Website</div>
+            <div class="footer-menu">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

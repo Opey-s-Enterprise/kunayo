@@ -1,0 +1,24 @@
+{
+  "name": "made_by_ky",
+  "version": "1.0.0",
+  "description": "A shopping website",
+  "main": "./server/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akere-Abdulraheem/Made_by_ky.git"
+  },
+  "author": "Abdulraheem",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Akere-Abdulraheem/Made_by_ky/issues"
+  },
+  "homepage": "https://github.com/Akere-Abdulraheem/Made_by_ky#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "path": "^0.12.7"
+  },
+  "keywords": []
+}
