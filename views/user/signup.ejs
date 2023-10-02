@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <style>
-        body {
+        /* body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-        }
+        } */
 
         .container {
             max-width: 400px;
@@ -94,6 +96,8 @@
     </style>
 </head>
 <body>
+    <%- include ('../layout/header') %>
+    
     <div class="container">
         <h2>Sign Up</h2>
         <form id="signup-form">
@@ -124,6 +128,8 @@
             <p>This is the terms and conditions text.</p>
         </div>
     </div>
+
+    <%- include ('../layout/footer') %>
 
     <script>
         const agreeCheckbox = document.getElementById('agree');

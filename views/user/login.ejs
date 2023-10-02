@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <style>
         body {
     font-family: Arial, sans-serif;
@@ -63,6 +65,8 @@ a {
     </style>
 </head>
 <body>
+    <%- include ('../layout/header') %>
+
     <div class="container">
         <h1>Login</h1>
         <form action="/login" method="post" id="login-form">
@@ -78,6 +82,9 @@ a {
         </form>
         <p>Don't have an account? <a href="/signup">Sign up</a></p>
     </div>
-    <script src="script.js"></script>
+
+    <%- include ('../layout/footer') %>
+    
 </body>
+    <!-- <script src="script.js"></script> -->
 </html>
