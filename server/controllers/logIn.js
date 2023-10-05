@@ -20,7 +20,7 @@ const login = async (req, res) => { // async added because of bcryt
                     httpOnly: true 
                 }
                 res.cookie('userRegistered', token, cookieOptions);
-                return res.json({status:'sucess', sucess:'User has been logged In'})
+                return res.json({status:'success', success:'User has been logged In'})
             }
         })
     }

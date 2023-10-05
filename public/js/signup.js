@@ -40,7 +40,7 @@ form.addEventListener('submit', (e) => {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === "error") { // Fix the comparison operator
+        if (data.status == "error") { // Fix the comparison operator
             success.style.display = 'none';
             error.style.display = 'block';
             error.innerText = data.error;

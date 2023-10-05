@@ -12,7 +12,7 @@ const signup = async (req, res) => { // async added because of bcryt
                 const password = bcrypt.hash(Npassword, 14);
                 db.query('insert into users_Info set ?', {email:email, password:password, fullName:name},(error, results) => {
                     if (error) throw error;
-                    return res.json({status: 'sucess', sucess: 'User has been registered sucessfully!'}) 
+                    return res.json({status: 'success', success: 'You have been registered sucessfully, you can now login!'}) 
                 })
             }
         })
