@@ -2,16 +2,44 @@ const express =require('express');
 const router = express.Router();
 const path = require('path');
 const projectRoot = path.resolve(__dirname, '..', '..');
+const db = require('./db.js');
+const bcrypt = require('bcryptjs');
 
-router.get('/', (req,res) => {
-    res.render('index')
-});
+// router.get('/', (req,res) => {
+//     res.render('index')
+// });
 
 //..../user/
-router.get('/login', (req,res) => {
+//....................login......................
+router.get('/', (req,res) => {
     res.render('user/login');
     //res.sendFile(path.join(projectRoot, 'views', 'user', 'login.html'));
 });
+// router.post('/', (req, res) => {
+//         const { username, password} = req.body;
+
+//         db.query('select * from users_Info where username =?', [username], (err, results) => {
+//             if (err) throw err;
+//             if (results.length === 1){
+                
+//                 const user = results[0];
+//                 bcrypt.compare(pasword, user.password, (bcryptErr, bcryptResult) => {
+//                     if (bcryptErr) throw bcryptErr;
+//                     if (bcryptResult) {
+//                         req.session.userId = user.id;
+//                         res.redirect('/new_arrival');
+//                     } else {
+//                         res.redirect('/login?error=1');
+//                     }
+//                 });
+//             }else {
+//                 res.json({status: "error", error: "username has not been registered. please signup"});
+//                 res.redirect('/signup');
+//             };
+//         });
+// });
+        
+            
 router.get('/signup', (req,res) => {
     res.render('user/signup');
 });

@@ -6,94 +6,8 @@
     <title>Sign Up</title>
     <link rel="stylesheet" type="text/css" href="/css/header.css">
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
-    <style>
-        /* body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        } */
-
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
-        .terms-label {
-            display: block;
-            margin-top: 10px;
-        }
-
-        #signup-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        #signup-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        /* Pop-up styles */
-        .popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1;
-        }
-
-        .popup-content {
-            background-color: #fff;
-            max-width: 80%;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 5px;
-            position: relative;
-        }
-
-        .popup-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/signup.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
     <%- include ('../layout/header') %>
@@ -115,7 +29,10 @@
                 I agree to the <a href="#" id="terms-link">Terms and Conditions</a>
             </label>
 
-            <button type="submit" id="signup-btn" disabled>Sign Up</button>
+            <div class="alert alert-danger" role="alert" id="error" style="display: none;"></div>
+            <div class="alert alert-success" role="alert" id="success" style="display: none;"></div>
+ 
+            <button type="submit" class="btn btn-primary"  id="signup-btn" disabled><a style="text-decoration: none; color: white;" href="/signup">Sign Up</a></button>
         </form>
     </div>
 
@@ -130,28 +47,7 @@
     </div>
 
     <%- include ('../layout/footer') %>
-
-    <script>
-        const agreeCheckbox = document.getElementById('agree');
-        const signupButton = document.getElementById('signup-btn');
-        const termsLink = document.getElementById('terms-link');
-        const termsPopup = document.getElementById('terms-popup');
-        const closePopupButton = document.getElementById('close-popup');
-
-        agreeCheckbox.addEventListener('change', function () {
-            signupButton.disabled = !this.checked;
-        });
-
-        // Show the terms pop-up when the link is clicked
-        termsLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            termsPopup.style.display = 'block';
-        });
-
-        // Close the terms pop-up when the close button is clicked
-        closePopupButton.addEventListener('click', function () {
-            termsPopup.style.display = 'none';
-        });
-    </script>
 </body>
+<script src="/js/signup.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </html>

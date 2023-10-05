@@ -1,15 +1,13 @@
-/* styles.css */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
-  color: #fff;
   padding: 10px 20px;
+  position: relative; /* Add position relative for proper positioning */
 }
 
 .navbar a {
-  color: #fff;
+  color: #333;
   text-decoration: none;
   margin: 0 10px;
 }
@@ -25,7 +23,7 @@
   margin-right: 10px;
 }
 
-.logo img{
+.logo img {
   max-width: 150px;
   height: 45px;
   margin-top: 10px;
@@ -35,25 +33,64 @@
   font-size: 18px;
 }
 
-#navbar-center, #navbar-right {
+.navbar-center {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1; /* Allow the center content to grow and occupy available space */
+}
+
+.navbar-right {
+  display: flex; /* Display "Sign Up" and "Login" in a row */
+}
+
+.navbar-right a {
+  margin: 0 10px; /* Add spacing between "Sign Up" and "Login" */
+}
+
+.toggle-btn {
+  display: none; /* Hide the toggle button by default */
 }
 
 @media screen and (max-width: 768px) {
-  .navbar-center, .navbar-right {
-      display: none;
-  }
-
-  .navbar-right {
-      margin-left: auto;
-  }
-
-  .navbar a {
-      margin: 10px 0;
-      display: block;
+  .navbar-center {
+    display: none; /* Hide the centered navigation on smaller screens */
   }
 
   .navbar {
-      flex-direction: column;
+    flex-direction: row-reverse; /* Reverse the order of items on smaller screens */
+  }
+
+  .toggle-btn {
+    display: block; /* Show the toggle button on smaller screens */
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: 20px;
+  }
+
+  .navbar a {
+    margin: 10px 0;
+    display: block;
+  }
+
+  .navbar {
+    position: relative;
+  }
+
+  .navbar .navbar-right {
+    flex-direction: column; /* Display "Sign Up" and "Login" in a column on mobile */
+    position: absolute;
+    top: 0;
+    right: -250px; /* Start offscreen to the right */
+    width: 250px; /* Adjust as needed */
+    height: 100%;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    transition: right 0.3s ease; /* Add a smooth transition */
+  }
+
+  .navbar .navbar-right.active {
+    right: 0;
   }
 }
