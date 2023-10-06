@@ -15,24 +15,21 @@
     <div class="container">
         <h2>Sign Up</h2>
         <form id="signup-form">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
+            <input class="rounded-pill" placeholder="Name" type="text" id="name" name="name" required>
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+            <input class="rounded-pill" placeholder="Email" type="email" id="email" name="email" required>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <input class="rounded-pill" type="password" id="password" placeholder="Password" name="password" required>
 
             <label>
                 <input type="checkbox" id="agree" required>
                 I agree to the <a href="#" id="terms-link">Terms and Conditions</a>
             </label>
 
-            <div class="alert alert-danger" role="alert" id="error" style="display: none;"></div>
-            <div class="alert alert-success" role="alert" id="success" style="display: none;"></div>
+            <div class="alert alert-danger rounded-pill" role="alert" id="error" style="display: none;"></div>
+            <div class="alert alert-success rounded-pill" role="alert" id="success" style="display: none;"></div>
  
-            <button type="submit" class="btn btn-primary"  id="signup-btn" disabled><a style="text-decoration: none; color: white;" href="/signup">Sign Up</a></button>
+            <button type="submit" class="btn btn-primary rounded-pill" id="signup-btn" disabled><a style="text-decoration: none; color: white;" href="/signup">Sign Up</a></button>
         </form>
     </div>
 

@@ -10,6 +10,13 @@
 </head>
 <body>
     <%- include ('../layout/header') %>
+
+    <%
+    <!-- const pageTitle = ''; -->
+    const pageDescription = 'New Arrivals';
+    %>
+    <%- include('../layout/subheaders', {pageDescription }) %>
+
     <div class="card" style="width: 18rem;">
         <img src="/images/soldout.png" class="card-img-top" alt="...">
         <div class="card-body">
@@ -18,7 +25,9 @@
           <a href="#" class="btn btn-primary">Go somewhere</a>
         </div>
     </div>
+
     <%- include ('../layout/loading') %>
+    
     <%- include ('../layout/footer') %>
 </body>
 </html>

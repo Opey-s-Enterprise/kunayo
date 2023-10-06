@@ -64,4 +64,9 @@ router.get('/outerwear', (req,res) => {
     res.render('product/outerwear')
 });
 
+
+router.get('/faq', (req,res) => {
+    res.render('pages/FAQs')
+});
+
 module.exports =router;

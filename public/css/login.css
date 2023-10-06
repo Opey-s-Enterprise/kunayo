@@ -9,12 +9,6 @@ body {
     text-align: center;
 }
 
-h1 {
-    font-size: 24px;
-    padding-top: 7px;
-    text-decoration: underline red 6px;
-}
-
 .input-group {
     margin: 10px 0;
     display: flex;
@@ -39,10 +33,10 @@ input[type="password"]{
     text-decoration: none;
 }
 
-#login, #login a {
+#login{
     background-color: white;
     border: 1px solid red;
-    border-radius: 13px;
+    /* border-radius: 13px; */
     color: red;
     text-decoration: none;
 }

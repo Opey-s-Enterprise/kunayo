@@ -7,7 +7,7 @@ const login = async (req, res) => { // async added because of bcryt
     const {email, password: Npassword} = req.body
     if (!email || !password) return res.json({status: 'error', error: 'Please enter email and password'});
     else{
-        db.query('select email from user_Info where email =?', [email], async( err, results) => {
+        db.query('select * from user_Info where email = ?', [email], async( err, results) => {
             if (err) throw err;
             if (!results[0] || ! await bcrypt.compare(password, result[0].password)) return res.json({status: 'error', error: 'Incorrect email or pasword!'})
             else{

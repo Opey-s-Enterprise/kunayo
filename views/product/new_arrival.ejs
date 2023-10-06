@@ -10,15 +10,24 @@
 </head>
 <body>
     <%- include ('../layout/header') %>
-    <p style="display: flex; justify-content: center;">t-shirts </p>
-    
-    <div class="grid text-center">
-        <div class="card" style="width: 18rem;">
-            <img src="/images/soldout.png" class="card-img-top" alt="...">
-            <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+
+    <%
+    <!-- const pageTitle = ''; -->
+    const pageDescription = 'New Arrivals';
+    %>
+    <%- include('../layout/subheaders', {pageDescription }) %>
+
+
+    <div class="container">
+        <p style="display: flex; justify-content: center;">t-shirts </p>      
+        <div class="grid text-center">
+            <div class="card" style="width: 18rem;">
+                <img src="/images/soldout.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <button><a href="#" class="btn btn-primary">Add to Cart</a></button>
+                </div>
             </div>
         </div>
     </div>
