@@ -5,44 +5,14 @@ const projectRoot = path.resolve(__dirname, '..', '..');
 const db = require('./db.js');
 const bcrypt = require('bcryptjs');
 
-// router.get('/', (req,res) => {
-//     res.render('index')
-// });
-
 //..../user/
-//....................login......................
 router.get('/', (req,res) => {
     res.render('user/login');
-    //res.sendFile(path.join(projectRoot, 'views', 'user', 'login.html'));
 });
-// router.post('/', (req, res) => {
-//         const { username, password} = req.body;
-
-//         db.query('select * from users_Info where username =?', [username], (err, results) => {
-//             if (err) throw err;
-//             if (results.length === 1){
-                
-//                 const user = results[0];
-//                 bcrypt.compare(pasword, user.password, (bcryptErr, bcryptResult) => {
-//                     if (bcryptErr) throw bcryptErr;
-//                     if (bcryptResult) {
-//                         req.session.userId = user.id;
-//                         res.redirect('/new_arrival');
-//                     } else {
-//                         res.redirect('/login?error=1');
-//                     }
-//                 });
-//             }else {
-//                 res.json({status: "error", error: "username has not been registered. please signup"});
-//                 res.redirect('/signup');
-//             };
-//         });
-// });
-        
-            
 router.get('/signup', (req,res) => {
     res.render('user/signup');
 });
+
 
 //.../product/
 router.get('/accessories', (req,res) => {
@@ -65,8 +35,55 @@ router.get('/outerwear', (req,res) => {
 });
 
 
+//..../pages
 router.get('/faq', (req,res) => {
     res.render('pages/FAQs')
 });
+router.get('/about', (req,res) => {
+    res.render('pages/About')
+});
+router.get('/checkout', (req,res) => {
+    res.render('pages/checkout')
+});
+router.get('/contact_us', (req,res) => {
+    res.render('pages/contact-us')
+});
+router.get('/t&c', (req,res) => {
+    res.render('pages/T&C')
+});
+router.get('/cart', (req,res) => {
+    res.render('pages/cart')
+});
 
 module.exports =router;
+
+// router.get('/', (req,res) => {
+//     res.render('index')
+// });
+
+//res.sendFile(path.join(projectRoot, 'views', 'user', 'login.html'));
+
+
+// router.post('/', (req, res) => {
+    //         const { username, password} = req.body;
+    
+    //         db.query('select * from users_Info where username =?', [username], (err, results) => {
+    //             if (err) throw err;
+    //             if (results.length === 1){
+                    
+    //                 const user = results[0];
+    //                 bcrypt.compare(pasword, user.password, (bcryptErr, bcryptResult) => {
+    //                     if (bcryptErr) throw bcryptErr;
+    //                     if (bcryptResult) {
+    //                         req.session.userId = user.id;
+    //                         res.redirect('/new_arrival');
+    //                     } else {
+    //                         res.redirect('/login?error=1');
+    //                     }
+    //                 });
+    //             }else {
+    //                 res.json({status: "error", error: "username has not been registered. please signup"});
+    //                 res.redirect('/signup');
+    //             };
+    //         });
+    // });
