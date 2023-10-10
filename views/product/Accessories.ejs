@@ -1,21 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doc1</title>
-    <link rel="stylesheet" type="text/css" href="/css/header.css">
-    <link rel="stylesheet" type="text/css" href="/css/footer.css">
-</head>
-<body>
-    <%- include ('../layout/header') %>
-    <p style="display: flex; justify-content: center;">Welcome </p>
-    <%
-    <!-- const pageTitle = ''; -->
-    const pageDescription = 'New Arrivals';
-    %>
-    <%- include('../layout/subheaders', {pageDescription }) %>
-    <%- include ('../layout/loading') %>
-    <%- include ('../layout/footer') %>
-</body>
-</html>
+<%
+<!-- variables tabs -->
+const pagetitle ='Accessories';
+const pageDescription = 'Accessories';
+%>
+
+<%- include ('../layout/header', {pagetitle }) %>
+
+<%- include ('../layout/nav') %>
+<div class=".container">     
+    <div class="grid text-center">
+        <% for (let product of productSection) {%>
+            <div class="card" style="width: 18rem;">
+                <img src="data:image/jpeg;base64,<%= product.product_image.toString('base64') %>" alt="<%= product.product_name %>" class="img-fluid">
+                <div class="card-body">
+                    <h2 class="card-title"><%= product.product_name %></h2>
+                    <p class="card-text"><%= product.product_type %></p>
+                    <p class="card-text">Price: $<%= product.product_price %></p>
+                    <button><a href="/add-to-cart" class="btn btn-primary">Add to Cart</a></button>
+                </div>
+            </div>
+        <% }; %>
+    </div>
+</div>
+
+<!-- <%- include ('../layout/loading') %> -->
+<%- include ('../layout/footer') %>
+<%- include ('../layout/scripts') %>

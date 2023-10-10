@@ -1,0 +1,75 @@
+<!-- cart.ejs -->
+
+<%
+const pagetitle = 'Cart';
+const pageDescription = 'Your Shopping Cart';
+%>
+
+<%- include ('../layout/header', { pagetitle }) %>
+
+<%- include ('../layout/nav') %>
+
+<div class="container">
+    <h1>Your Shopping Cart</h1>
+    <% if (cart && cart.length > 0) { %>
+    <table class="table table-bordered">
+        <% cart.forEach(function(item) { %>
+            <tr>
+                <td>
+                    <div>
+                        <img src="<%= item.image ? 'data:image/jpeg;base64,' + item.image.toString('base64') : '' %>" alt="<%= item.name %>" class="img-fluid">
+                        <div>
+                            <p> <%= item.name %></p>
+                                    <!-- if statement here! -->
+                            <small><span>NGN</span><%= item.price %></small>
+                            <br>
+                            <form method="post" action="/remove_product">
+                                <input type="hidden" name="id" value="<%= item.id %>">
+                                <input type="submit" name="remove_btn" class="remove-btn" value="remove">
+                            </form>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <form method="post" action="/edit_product_quantity">
+                        <input type="hidden" value="<% item.id %>" name="id">
+                        <input type="submit" value="-" name="decreaseProductQuantity">
+                        <input type="text" name="quantity" value="<%= item.quantity %>" readonly>
+                        <input type="submit" value="+" name="increaseProductQuantity">
+                    </form>
+                </td>
+
+                <td>
+                    <!-- if statement here! -->
+                    <span><%= item.price * item.quantity %></span>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+
+
+    <div class="cart-total">
+        <table>
+            <tr>
+                <td>Total</td>
+                <td><%= total %></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="checkout-container">
+        <form method="get" action="/checkout">
+            <input type="submit" class="btn checkout-btn" value="checkout" name=""> 
+        </form>
+    </div>
+
+    <% } else { %>
+        <p>Your shopping cart is empty.</p>
+        <a href="/new_arrival">shop now</a>
+    <% } %>
+</div>
+
+
+<%- include ('../layout/footer') %>
+<%- include ('../layout/scripts') %>
