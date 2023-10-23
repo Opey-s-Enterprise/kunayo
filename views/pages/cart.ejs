@@ -16,23 +16,27 @@ const pageDescription = 'Your Shopping Cart';
 </div>
 
 <table class="pt-5" style="width: 100%;">
-    <tr>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Subtotal</th>
-    </tr>
 
     <% if (cart && cart.length > 0) { %>
 
         <% cart.forEach(function(product) { %>
             <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+            
+            <tr>
                 <td>
                     <div>
-                        <img src="<%= product.image %>" alt="<%= product.name %>" class="rounded">
+                        <img src="data:image/jpeg; <%= product.image %>" alt="<%= product.name %>" class="rounded img-fluid">
                         <div>
                             <p> <%= product.name %></p>
-                                    <!-- if statement here! -->
-                            <small><span>NGN</span><%= product.price %></small>
+                                    <% if(product.sale_price){ %>
+                                        <small><span>NGN</span><%= product.sale_price %></small>
+                                    <% } else{ %>
+                                        <small><span>NGN</span><%= product.price %></small>
+                                    <% } %>
                             <br>
                             <form method="post" action="/remove_product">
                                 <input type="hidden" name="id" value="<%= product.id %>">
@@ -44,27 +48,30 @@ const pageDescription = 'Your Shopping Cart';
 
                 <td>
                     <form method="post" action="/edit_product_quantity">
-                        <input type="hidden" value="<% product.id %>" name="id">
+                        <input type="hidden" value="<%= product.id %>" name="id">
                         <input type="submit" value="-" name="decreaseProductQuantity">
                         <input type="text" name="quantity" value="<%= product.quantity %>" readonly>
                         <input type="submit" value="+" name="increaseProductQuantity">
                     </form>
                 </td>
 
+                <!-- price -->
                 <td>
-                    <!-- if statement here! -->
-                    <span class="product-price"><%= product.price * product.quantity %></span>
+                    <% if(product.sale_price){ %>
+                        <span class="product-price"><%= product.sale_price * product.quantity %></span>
+                    <% } else { %>
+                        <span class="product-price"><%= product.price * product.quantity %></span>
+                    <% } %>
                 </td>
             </tr>
-        
         <% }) %>
 
 
     <div class="cart-total">
         <table>
             <tr>
-                <td>Total</td>
-                <td><%= total %></td>
+                <td>Total:</td>
+                <td>  NGN <%= total %></td>
             </tr>
         </table>
     </div>

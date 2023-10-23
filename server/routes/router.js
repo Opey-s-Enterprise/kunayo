@@ -21,13 +21,6 @@ router.get('/accessories', (req,res) => {
     res.render('product/Accessories')
 });
 router.get('/new_arrival', (req,res) => {
-    const mysql = require('mysql2'),dotenv = require('dotenv').config(),
-        db = mysql.createConnection({
-        host: process.env.HOST_DB,
-        user: process.env.USER_DB,
-        password: process.env.PASSWORD_DB,
-        database: process.env.DB,
-    })
         db.query('select * from products', (err, result) => {
         res.render('product/new_arrival', {result:result})
     // Product.getAll((products) => {
@@ -77,7 +70,9 @@ function isProductInCart(cart, productId){
 function calculateTotal(cart, req){
     total = 0;
     for (let i =0; i<cart.length; i++){
-        if (cart[i].price){
+        if (cart[i].sale_price){
+            total = total + (cart[i].sale_price * cart[i].quantity);
+        }else{
             total = total + (cart[i].price * cart[i].quantity);
         }
     }
@@ -90,8 +85,9 @@ router.post('/add-to-cart', (req, res) => {
         productPrice = parseFloat(req.body.product_price),
         productImage = req.body.product_image,
         productQuantity =req.body.quantity,
+        productSalePrice = req.body.sale_price
         product = {
-            id:productId, name: productName, price: productPrice, quantity:productQuantity, image: productImage 
+            id:productId, name: productName, price: productPrice, quantity:productQuantity, image: productImage, sale_price:productSalePrice
         };
 
     // Check if a cart already exists in the session
@@ -105,6 +101,7 @@ router.post('/add-to-cart', (req, res) => {
         req.session.cart = [];
         const cart = req.session.cart;
     }
+
     const cart = req.session.cart;
     calculateTotal(cart,req);
 
@@ -171,43 +168,42 @@ router.post('/edit_product_quantity', (req,res) =>{
 
 // Checkout Page
 router.get('/checkout', (req, res) => {
-  res.render('pages/checkout')
+    const total = req.session.total
+  res.render('pages/checkout',{total:total})
 });
 
 router.post('/place_order', (req, res) => {
+    const 
+        name = req.body.name,
+        email = req.body.email,
+        city = req.body.city,
+        phone = req.body.phone,
+        address = req.body.address,
+        cost = req.session.total,
+        status = 'NOT PAID',
+        date = new Date();
+    
+    db.connect((err) => {
+        if (err){
+            console.log(err)
+        }else{
+            const
+                query = 'insert into orders(cost,name,email,status,city,address,phone,date) values ?',
+                values =[
+                    [cost,name,email,city,phone,address,status,date]
+                ];
+                db.query(query,[values],(err,result) =>{
+                    res.redirect('/payment')
+                })
+        }
+    })
     res.render('pages/checkout')
 });
 
+//payment / Thank you
+router.get('/payment',(req,res) =>{
+    res.render('pages/payment')
+})
+//the end
 
 module.exports =router;
-
-// router.get('/', (req,res) => {
-//     res.render('index')
-// });
-
-//res.sendFile(path.join(projectRoot, 'views', 'user', 'login.html'));
-
-
-// router.post('/', (req, res) => {
-    //         const { username, password} = req.body;
-    
-    //         db.query('select * from users_Info where username =?', [username], (err, results) => {
-    //             if (err) throw err;
-    //             if (results.length === 1){
-                    
-    //                 const user = results[0];
-    //                 bcrypt.compare(pasword, user.password, (bcryptErr, bcryptResult) => {
-    //                     if (bcryptErr) throw bcryptErr;
-    //                     if (bcryptResult) {
-    //                         req.session.userId = user.id;
-    //                         res.redirect('/new_arrival');
-    //                     } else {
-    //                         res.redirect('/login?error=1');
-    //                     }
-    //                 });
-    //             }else {
-    //                 res.json({status: "error", error: "username has not been registered. please signup"});
-    //                 res.redirect('/signup');
-    //             };
-    //         });
-    // });

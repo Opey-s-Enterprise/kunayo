@@ -6,7 +6,32 @@
     </div>
 
     <div class="mx-auto container">
-        <form id="checkout-form" action="">
+        <form id="checkout-form" action="/place_order" method="post">
+
+            <div class="form-group checkout-small-element">
+                <input type="text" class="form-control" id="checkout-name" name="name" placeholder="name">
+            </div>
+
+            <div class="form-group checkout-small-element">
+                <input type="text" class="form-control" id="checkout-phone" name="phone" placeholder="phone">
+            </div>
+
+            <div class="form-group checkout-small-element">
+                <input type="text" class="form-control" id="checkout-email" name="email" placeholder="email">
+            </div>
+
+            <div class="form-group checkout-small-element">
+                <input type="text" class="form-control" id="checkout-city" name="city" placeholder="city">
+            </div>
+
+            <div class="form-group checkout-small-element">
+                <input type="text" class="form-control" id="checkout-address" name="address" placeholder="address">
+            </div>
+
+            <div class="form-group checkout-small-element">
+                <p>Total amount: NGN <%= total %> </p>
+                <input type="submit" class="btn" id="checkout-btn" value="Checkout">
+            </div>
 
         </form>
     </div>

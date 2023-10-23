@@ -14,8 +14,7 @@ const pageDescription = 'New_Arrivals';
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 margin">
             <div>
                 <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
-                <img src="<%= item.image %>" alt="<%= item.name %>">
-
+                
                 <% if(item.sale_price){ %>
                 <h3>NGN<strong class="red"><%= item.sale_price %></strong></h3>             
                 <h3 style="text-decoration: line-through;">NGN<strong class="red"><%= item.price %></strong></h3>
