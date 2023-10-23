@@ -27,7 +27,7 @@ db.connect((err) => {
     console.log(`Connected to database`);
 });
 app.listen(port, () => {
-    console.log('server is running');
+    console.log(`server is running on ${port}`);
     const currentDate = new Date();
     const formattedDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`;
     const formattedTime = `${currentDate.getHours()}-${currentDate.getMinutes()}-${currentDate.getSeconds()}`;

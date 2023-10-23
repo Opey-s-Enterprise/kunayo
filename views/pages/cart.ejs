@@ -9,22 +9,33 @@ const pageDescription = 'Your Shopping Cart';
 
 <%- include ('../layout/nav') %>
 
-<div class="container">
+<section class="cart container mt-2 my-3 py-5">
+
+<div class="container mt -2">
     <h1>Your Shopping Cart</h1>
+</div>
+
+<table class="pt-5" style="width: 100%;">
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+    </tr>
+
     <% if (cart && cart.length > 0) { %>
-    <table class="table table-bordered">
-        <% cart.forEach(function(item) { %>
+
+        <% cart.forEach(function(product) { %>
             <tr>
                 <td>
                     <div>
-                        <img src="<%= item.image ? 'data:image/jpeg;base64,' + item.image.toString('base64') : '' %>" alt="<%= item.name %>" class="img-fluid">
+                        <img src="<%= product.image %>" alt="<%= product.name %>" class="rounded">
                         <div>
-                            <p> <%= item.name %></p>
+                            <p> <%= product.name %></p>
                                     <!-- if statement here! -->
-                            <small><span>NGN</span><%= item.price %></small>
+                            <small><span>NGN</span><%= product.price %></small>
                             <br>
                             <form method="post" action="/remove_product">
-                                <input type="hidden" name="id" value="<%= item.id %>">
+                                <input type="hidden" name="id" value="<%= product.id %>">
                                 <input type="submit" name="remove_btn" class="remove-btn" value="remove">
                             </form>
                         </div>
@@ -33,20 +44,20 @@ const pageDescription = 'Your Shopping Cart';
 
                 <td>
                     <form method="post" action="/edit_product_quantity">
-                        <input type="hidden" value="<% item.id %>" name="id">
+                        <input type="hidden" value="<% product.id %>" name="id">
                         <input type="submit" value="-" name="decreaseProductQuantity">
-                        <input type="text" name="quantity" value="<%= item.quantity %>" readonly>
+                        <input type="text" name="quantity" value="<%= product.quantity %>" readonly>
                         <input type="submit" value="+" name="increaseProductQuantity">
                     </form>
                 </td>
 
                 <td>
                     <!-- if statement here! -->
-                    <span><%= item.price * item.quantity %></span>
+                    <span class="product-price"><%= product.price * product.quantity %></span>
                 </td>
             </tr>
+        
         <% }) %>
-    </table>
 
 
     <div class="cart-total">
@@ -68,8 +79,9 @@ const pageDescription = 'Your Shopping Cart';
         <p>Your shopping cart is empty.</p>
         <a href="/new_arrival">shop now</a>
     <% } %>
+</table>
 </div>
-
+</section>
 
 <%- include ('../layout/footer') %>
 <%- include ('../layout/scripts') %>

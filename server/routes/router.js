@@ -21,8 +21,17 @@ router.get('/accessories', (req,res) => {
     res.render('product/Accessories')
 });
 router.get('/new_arrival', (req,res) => {
-    Product.getAll((products) => {
-    res.render('product/new_arrival', {productSection: products})
+    const mysql = require('mysql2'),dotenv = require('dotenv').config(),
+        db = mysql.createConnection({
+        host: process.env.HOST_DB,
+        user: process.env.USER_DB,
+        password: process.env.PASSWORD_DB,
+        database: process.env.DB,
+    })
+        db.query('select * from products', (err, result) => {
+        res.render('product/new_arrival', {result:result})
+    // Product.getAll((products) => {
+    // res.render('product/new_arrival', {productSection: products})
     });
 }); 
 router.get('/pants', (req,res) => {
@@ -65,23 +74,18 @@ function isProductInCart(cart, productId){
     }
     return false;
 }
-
 function calculateTotal(cart, req){
     total = 0;
     for (let i =0; i<cart.length; i++){
         if (cart[i].price){
             total = total + (cart[i].price * cart[i].quantity);
         }
-        // else{
-        //     total = total + (cart[i].price * cart[i*quantity]);
-        // }
     }
     req.session.total = total;
     return total;
 }
-
 router.post('/add-to-cart', (req, res) => {
-    var productId = req.body.product_id,
+    const productId = req.body.product_id,
         productName = req.body.product_name,
         productPrice = parseFloat(req.body.product_price),
         productImage = req.body.product_image,
@@ -92,16 +96,16 @@ router.post('/add-to-cart', (req, res) => {
 
     // Check if a cart already exists in the session
     if(req.session.cart) {
-        var cart = req.session.cart;
+        const cart = req.session.cart;
 
         if(!isProductInCart(cart, productId)){
             cart.push(product);
         }
     }else{
-        req.session.cart = [product];
-        var cart = req.session.cart;
+        req.session.cart = [];
+        const cart = req.session.cart;
     }
-
+    const cart = req.session.cart;
     calculateTotal(cart,req);
 
     const redirectTo = req.get('referer')
