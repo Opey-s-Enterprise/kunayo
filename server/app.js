@@ -18,6 +18,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
 app.use(cookie());
+app.use((err, req, res, next) => {
+    console.error(err);
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({ error: 'Internal Server Error' });
+});
 app.use('/api', require('./controllers/auth'));
 app.use('/',routes);
 

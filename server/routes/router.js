@@ -5,7 +5,8 @@ const express =require('express'),
     db = require('./db.js'),
     bcrypt = require('bcryptjs'),
     loggedIn = require('../controllers/loggedIn'),
-    Product =require('../models/products.js');
+    Product =require('../models/products.js'),
+    dotenv = require('dotenv').config();
 
 //..../user/
 router.get('/',(req,res) => {
@@ -48,9 +49,6 @@ router.get('/faq', (req,res) => {
 router.get('/about', (req,res) => {
     res.render('pages/About')
 });
-router.get('/checkout', (req,res) => {
-    res.render('pages/checkout')
-});
 router.get('/contact_us', (req,res) => {
     res.render('pages/contact-us')
 });
@@ -80,7 +78,8 @@ function calculateTotal(cart, req){
     return total;
 }
 router.post('/add-to-cart', (req, res) => {
-    const productId = req.body.product_id,
+    const
+        productId = req.body.product_id,
         productName = req.body.product_name,
         productPrice = parseFloat(req.body.product_price),
         productImage = req.body.product_image,
@@ -89,7 +88,7 @@ router.post('/add-to-cart', (req, res) => {
         product = {
             id:productId, name: productName, price: productPrice, quantity:productQuantity, image: productImage, sale_price:productSalePrice
         };
-
+  
     // Check if a cart already exists in the session
     if(req.session.cart) {
         const cart = req.session.cart;
@@ -105,13 +104,12 @@ router.post('/add-to-cart', (req, res) => {
     const cart = req.session.cart;
     calculateTotal(cart,req);
 
-    const redirectTo = req.get('referer')
-        res.redirect(redirectTo);
+    res.redirect(req.get('Referer'));
+
 });
 
 router.get('/cart', (req,res) => {
     if (!req.session) {
-        // Handle the case where the session is not properly initialized
         res.status(500).send('Session is not properly initialized');
         return;
     }
@@ -169,41 +167,77 @@ router.post('/edit_product_quantity', (req,res) =>{
 // Checkout Page
 router.get('/checkout', (req, res) => {
     const total = req.session.total
-  res.render('pages/checkout',{total:total})
+    const publicKey =process.env.paystackPublicKey
+  res.render('pages/checkout',{total:total,publicKey:publicKey })
 });
 
 router.post('/place_order', (req, res) => {
-    const 
-        name = req.body.name,
-        email = req.body.email,
-        city = req.body.city,
-        phone = req.body.phone,
-        address = req.body.address,
-        cost = req.session.total,
-        status = 'NOT PAID',
-        date = new Date();
-    
-    db.connect((err) => {
-        if (err){
-            console.log(err)
-        }else{
-            const
-                query = 'insert into orders(cost,name,email,status,city,address,phone,date) values ?',
-                values =[
-                    [cost,name,email,city,phone,address,status,date]
-                ];
-                db.query(query,[values],(err,result) =>{
-                    res.redirect('/payment')
-                })
-        }
-    })
-    res.render('pages/checkout')
+    try {
+        const checkout_data = {
+            name: req.body.name,
+            email: req.body.email,
+            city: req.body.city,
+            phone: req.body.phone,
+            address: req.body.address,
+            cost: req.session.total,
+            status: 'PAID',
+            date: new Date(),
+            cart: req.session.cart
+        };
+        console.log(checkout_data);
+    } catch (error) {
+        console.log('could not register order data')                    
+    }
+
+    // let product_ids = '';  
+    // for(let i=0; i<cart.length; i++){
+    //     product_ids = product_ids + ',' + cart[i].id;
+    // }
+
+    // db.connect((err) => {
+    //     if (err){
+    //         console.log(err)
+    //     }else{
+    //         const query = "INSERT INTO orders(cost,name,email,status,city,address,phone,date,product_ids) VALUES ?";
+    //         const values =[
+    //                 [cost,name,email,status,city,address,phone,date,product_ids]
+    //             ];
+                
+    //          db.query(query,[values],(err,result)=>{
+    //             const paystackResponse = req.session.paystackResponse
+    //             res.json({ reference, paystackResponse});
+    //             res.status(500).send('Payment process completed!');
+    //         })
+    //     }
+    // })    
 });
 
 //payment / Thank you
-router.get('/payment',(req,res) =>{
-    res.render('pages/payment')
-})
+// Endpoint to check payment status
+router.post('/check-payment/', async (req, res) => {
+    const reference = req.body.reference;
+    console.log(`new payment ref is: ${reference}`);
+    try {
+        const axios = require('axios');
+        const paystackSecretKey = process.env.paystackSecretKey;
+
+        const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
+            headers: {
+                Authorization: `Bearer ${paystackSecretKey}`,
+            },
+        });
+        if (response.data.data.status === 'success') {
+            const transactionReference = response.data.data.reference;
+            res.json({ transactionReference });
+
+        } else {
+            res.json("Payment verification failed");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Failed to check payment status');
+    }
+});
 //the end
 
 module.exports =router;
