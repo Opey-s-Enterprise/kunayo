@@ -13,7 +13,6 @@ const login = async (req, res) => { // async added because of bcryt
             else{
                 const token = jwt.sign({id:result[0].id}, process.env.JWS_SECRET_KEY,{
                     expiresIn: process.env.JWT_EXPIRES,
-                    // httpOnly: true 
                 })
                 const cookieOptions = {
                     expiresIn: new Date(Date.now() + process.env.COOKIE_EXPIRES *24 *60 * 60 * 1000),

@@ -10,65 +10,75 @@ const pageDescription = 'Checkout';
     <section class="my-2 py-3 checkout">
 
         <div class="cont' text-center mt-1 pt-5">
-            <h2>Check Out</h2>
+            <%- include('../layout/subheaders', {pageDescription }) %>
             <hr class="mx-auto">
         </div>
 
-        <div class="mx-auto container">
+        <div class=".container">
             <% if (typeof total !== 'undefined') { %>
+                <% if(status === "loggedIn"){ %> 
                 <form id="checkout-form">
 
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-first-name" name=" first-name" placeholder="first-name">
-                </div>
+                    <h3>Contact</h3>
+                    <div class="row">
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-last-name" name=" last-name" placeholder="Last Name" required>
+                        </div>
+                        <div class=" col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-first-name" name=" first-name" placeholder="First Name" required>
+                        </div>
+                    </div>
 
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-last-name" name=" last-name" placeholder="last-name">
-                </div>
+                    <div class="row">
+                        <div class=" col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-email" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-phone" name="phone" placeholder="Phone Number" required>
+                        </div>
+                    </div>
 
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-email" name="email" placeholder="email">
-                </div>
+                    <h3>Shipping Address</h3>
+                    <div class="row ">
+                        <div class="col-12">
+                            <input type="text" class="rounded-pill form-control" id="checkout-country" name="country" placeholder="Country" required>
+                          </div>
+                          <div class="col-12">
+                                <input type="text" class="rounded-pill form-control" id="checkout-address" name="address" placeholder="Address" required>
+                          </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class=" col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-zip-code" name="zip-code" placeholder="Zip Code" required>
+                        </div>
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-state" name="state" placeholder="State" required>
+                        </div>
+                    </div>
 
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-phone" name="phone" placeholder="phone">
-                </div>
-                
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-country" name="country" placeholder="Country">
-                </div>
-
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-address" name="address" placeholder="address">
-                </div>
-
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-zip-code" name="zip-code" placeholder="Zip-Code">
-                </div>
-
-                <div class="form-group checkout-small-element">
-                    <input type="text" class="form-control" id="checkout-state" name="state" placeholder="state">
-                </div>
-
-                <div class="form-group checkout-small-element">
-                        <p>Total amount: NGN <%= total %> </p>
+                    <div class="d-flex justify-content-center align-items-center form-group checkout-small-element">
+                        <!-- <p>Total amount: NGN <%= total %> </p> -->
                         <input type="hidden" id="amount" value="<%= total %>">
                             <input type="hidden" id="key" value="<%= publicKey %>">
-                        <input type="button" onclick="payWithPaystack()" class="btn" id="checkout-btn" value="Pay now">
-                        
-                        
+                        <input type="button" onclick="payWithPaystack()"  id="checkout-btn" value="Pay now" class="btn">
+                     
+                        <% } else{ %>
+                            <div>
+                                <p>Please <a href="/login">Login</a> to checkout</p>
+                            </div>
+                    <%}%>
                     <% } else { %>
                         <p>Your cart is empty.</p>
                     <% } %>
                 </div> 
-                
-                <div id="paystack-iframe-container"></div>
-
             </form>
         </div>
     </section>
-    <script src="https://js.paystack.co/v1/inline.js"></script>
-  <script>
+
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
     document.getElementById("checkout-form").addEventListener("submit", payWithPaystack,false);    
     function payWithPaystack() {
         const email = document.getElementById("checkout-email").value;
@@ -82,44 +92,61 @@ const pageDescription = 'Checkout';
             ;       
 
       const handler = PaystackPop.setup({
-        key: key, // Replace with your Paystack secret key
+        key: key,
         email: email,
-        amount: amount * 100, // Amount in kobo
+        amount: amount * 100,
         currency: 'NGN',
             callback: function(response) {
                 const reference = response.reference;
+                const data1 = {
+                                    name: name,
+                                    email: email,
+                                    city: city,
+                                    phone: phone,
+                                    address: address,
+                                    cost: amount
+                                };
             alert(`Please hold while payment is been confirmed`)            
                 fetch('/check-payment/',{
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ reference: reference})
+                    body: JSON.stringify({ reference: reference, data:data1})
                 }).then((response) => response.json())
                 .then((data) => {
+                    if(data.staus === 'internal'){
+                        alert('Internal Server Error')
+                    }
+                    if (data.status === 'N'){
+                        alert('Payment verification failed. Contact us for further Details');
+                    }
+                    if(data.status === 'Y'){
                     alert(`Your Payment has been confirmed. Your transaction id is: ${data.transactionReference}`);
+                        try {
+                                const data1 = {
+                                    name: name,
+                                    email: email,
+                                    city: city,
+                                    phone: phone,
+                                    address: address,
+                                    cost: amount
+                                };
+                                    fetch('/place_order', {
+                                        method: 'post',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ data: data1 })
+                                    })  
+                                }catch(error) {
+                                    console.log(error)
+                                }
+                    // window.href.locator
+                    }
                 }).catch((error)=>{
                     console.error(error)
-                })
-                        try {
-                            const data1 = {
-                                name: name,
-                                email: email,
-                                city: city,
-                                phone: phone,
-                                address: address,
-                                cost: amount
-                            };
-                                fetch('/place_order', {
-                                    method: 'post',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({ data: data1 })
-                                })  
-                            }catch(error) {
-                                console.log(error)
-                            }            
+                })          
         },onClose: function() {
             alert('Transaction was not completed, window closed.');
         },
@@ -127,6 +154,5 @@ const pageDescription = 'Checkout';
       handler.openIframe();
 }
 </script>
+<%- include ('../layout/scripts') %>
 <%- include ('../layout/footer') %>
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
-<!-- <%- include ('../layout/scripts') %> -->

@@ -5,40 +5,64 @@ const express =require('express'),
     db = require('./db.js'),
     bcrypt = require('bcryptjs'),
     loggedIn = require('../controllers/loggedIn'),
+    logout = require('../controllers/logOut'),
     Product =require('../models/products.js'),
     dotenv = require('dotenv').config();
 
 //..../user/
-router.get('/',(req,res) => {
+router.get('/login',(req,res) => {
     res.render('user/login');
 });
+router.get('/logout', logout)
 router.get('/signup', (req,res) => {
     res.render('user/signup');
 });
-
+router.get('/myAccount', loggedIn, (req,res) => {
+if (req.user){  
+    res.render('user/myAccount',{status:'loggedIn', user:req.user })
+}else{
+    res.render('user/myAccount',{status:'no', user:'nothing' })
+}
+})
+ 
 
 //.../product/
-router.get('/accessories', (req,res) => {
-    res.render('product/Accessories')
-});
-router.get('/new_arrival', (req,res) => {
-        db.query('select * from products', (err, result) => {
-        res.render('product/new_arrival', {result:result})
+router.get('/', (req,res) => {
+    db.query('select * from products', (err, result) => {
+    res.render('product/product_page', {result:result, pagetitle: 'New_Arrivals', pageDescription: 'New_Arrivals'})
     // Product.getAll((products) => {
     // res.render('product/new_arrival', {productSection: products})
+});
+}); 
+router.get('/accessories', (req,res) => {
+    db.query('select * from products', (err, result) => {
+        res.render('product/product_page', {result:result, pagetitle: 'Accessories', pageDescription: 'Accessories'})
+    });
+});
+router.get('/new_arrival', (req,res) => {
+    db.query('select * from products', (err, result) => {
+        res.render('product/product_page', {result:result, pagetitle: 'New_Arrivals', pageDescription: 'New Arrivals'})
     });
 }); 
 router.get('/pants', (req,res) => {
-    res.render('product/pants')
+    db.query(`select * from products where type ='pants'`, (err, result) => {
+        res.render('product/product_page', {result:result, pagetitle: 'Pants', pageDescription: 'Pants'})
+    });
 });
 router.get('/shop_all', (req,res) => {
-    res.render('product/shop_all')
+    db.query('select * from products', (err, result) => {
+        res.render('product/product_page', {result:result, pagetitle: 'Shop_all', pageDescription: 'Shop All'})
+    });
 });
 router.get('/T-shirts', (req,res) => {
-    res.render('product/T-shirts')
+    db.query(`select * from products where type ='T-shirts'`, (err, result) => {
+        res.render('product/product_page', {result:result, pagetitle: 'T-shirts', pageDescription: 'T-shirts'})
+    });
 });
 router.get('/outerwear', (req,res) => {
-    res.render('product/outerwear')
+    db.query(`select * from products where type ='outwear'`, (err, result) => {
+        res.render('product/product_page', {result:result, pagetitle: 'Outerwear', pageDescription: 'Outerwear'})
+    });
 });
 
 
@@ -55,8 +79,12 @@ router.get('/contact_us', (req,res) => {
 router.get('/t&c', (req,res) => {
     res.render('pages/T&C')
 });
+router.get('/delivery', (req,res) => {
+    res.render('pages/delivery')
+});
 
-//cart-logic
+
+//...../cart-logic
 function isProductInCart(cart, productId){
     for(let i=0; i<cart.length; i++){
         if(cart[i].id == productId){
@@ -89,7 +117,6 @@ router.post('/add-to-cart', (req, res) => {
             id:productId, name: productName, price: productPrice, quantity:productQuantity, image: productImage, sale_price:productSalePrice
         };
   
-    // Check if a cart already exists in the session
     if(req.session.cart) {
         const cart = req.session.cart;
 
@@ -107,18 +134,24 @@ router.post('/add-to-cart', (req, res) => {
     res.redirect(req.get('Referer'));
 
 });
-
-router.get('/cart', (req,res) => {
+router.get('/cart', loggedIn, (req,res) => {
     if (!req.session) {
         res.status(500).send('Session is not properly initialized');
         return;
     }
-    var cart = req.session.cart,
-        total = req.session.total;
-        
-    res.render('pages/cart', {cart:cart, total:total})
+         if (req.user){        
+            var cart = req.session.cart,
+                total = req.session.total;
+            res.render('pages/cart', {cart:cart, total:total, status:'loggedIn', user:req.user})     
+        }else{        
+            var cart = req.session.cart,
+                total = req.session.total;
+                
+            res.render('pages/cart', {cart:cart, total:total, status:'no', user:'nothing'})
+        }
+    
+    
 });
-
 router.post('/remove_product', (req, res) => {
     const id = req.body.id,
         cart = req.session.cart;
@@ -131,7 +164,6 @@ router.post('/remove_product', (req, res) => {
         calculateTotal(cart,req);
         res.redirect('/cart');
 })
-
 router.post('/edit_product_quantity', (req,res) =>{
     const id =req.body.id,
         quantity = req.body.quantity,
@@ -164,13 +196,60 @@ router.post('/edit_product_quantity', (req,res) =>{
 })
 
 
-// Checkout Page
-router.get('/checkout', (req, res) => {
-    const total = req.session.total
-    const publicKey =process.env.paystackPublicKey
-  res.render('pages/checkout',{total:total,publicKey:publicKey })
+//...../Checkout Page
+router.get('/checkout',loggedIn, (req, res) => {
+    if (req.user){  
+            const total = req.session.total
+            const publicKey =process.env.paystackPublicKey
+        res.render('pages/checkout',{total:total,publicKey:publicKey, status:'loggedIn', user:req.user })
+    }else{
+        const total = req.session.total
+            const publicKey =process.env.paystackPublicKey
+        res.render('pages/checkout',{total:total,publicKey:publicKey, status:'no', user:'nothing' })
+    }
 });
+    //...../payment
+// Endpoint to check payment status
+router.post('/check-payment/', async (req, res) => {
+    const reference = req.body.reference;
+    console.log(`new payment initiated ref is: ${reference}`);
+        try {
+            const axios = require('axios');
+            const paystackSecretKey = process.env.paystackSecretKey;
 
+            const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
+                headers: {
+                    Authorization: `Bearer ${paystackSecretKey}`,
+                },
+            });
+                if (response.data.data.status === 'success' && response.data.data.amount === (req.session.total *100)) {
+                    const transactionReference = response.data.data.reference;
+                    res.json({status: 'Y', transactionReference });
+                    console.log(`ref: ${reference} is verified`)
+                } 
+                else {
+                    res.json({status: 'N'});
+                    console.log(`FRAUD: ${reference} verfication failed...status:${response.data.data.status} Paid amount:${response.data.data.amount} === Amount expected:${req.session.total*100}`)
+                    const checkout_data = {
+                        name: req.body.name,
+                        email: req.body.email,
+                        city: req.body.city,
+                        phone: req.body.phone,
+                        address: req.body.address,
+                        cost: req.session.total,
+                        date: new Date(),
+                        cart: req.session.cart
+                    };
+                    console.log(checkout_data);
+                }
+        }catch (error) {
+            console.error(error);
+            console.log(error)
+            res.status(500).send('Failed to check payment status');
+            res.json({status: 'internal'})
+        }
+});
+//..../adding orderr to db and sending mail
 router.post('/place_order', (req, res) => {
     try {
         const checkout_data = {
@@ -180,13 +259,13 @@ router.post('/place_order', (req, res) => {
             phone: req.body.phone,
             address: req.body.address,
             cost: req.session.total,
-            status: 'PAID',
+            status: 'VERIFIED',
             date: new Date(),
             cart: req.session.cart
         };
         console.log(checkout_data);
     } catch (error) {
-        console.log('could not register order data')                    
+        console.log('could not register order data on database')                    
     }
 
     // let product_ids = '';  
@@ -204,40 +283,41 @@ router.post('/place_order', (req, res) => {
     //             ];
                 
     //          db.query(query,[values],(err,result)=>{
-    //             const paystackResponse = req.session.paystackResponse
-    //             res.json({ reference, paystackResponse});
-    //             res.status(500).send('Payment process completed!');
+    //             console.log('Customer Data sucessufully added to Database')
     //         })
     //     }
     // })    
 });
 
-//payment / Thank you
-// Endpoint to check payment status
-router.post('/check-payment/', async (req, res) => {
-    const reference = req.body.reference;
-    console.log(`new payment ref is: ${reference}`);
-    try {
-        const axios = require('axios');
-        const paystackSecretKey = process.env.paystackSecretKey;
-
-        const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
-            headers: {
-                Authorization: `Bearer ${paystackSecretKey}`,
-            },
-        });
-        if (response.data.data.status === 'success') {
-            const transactionReference = response.data.data.reference;
-            res.json({ transactionReference });
-
-        } else {
-            res.json("Payment verification failed");
+router.get('/sendMail', (req,res) => {
+    res.render('pages/payment')
+})
+router.post('/sendMail', (req, res)=>{
+    const nodemailer = require('nodemailer')
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: process.env.myEmail,
+            pass:process.env.myEmailPass,
         }
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Failed to check payment status');
+    })
+    const mailOptions = {
+        from: process.env.myEmail,
+        to: 'akereabdulraheem@gmail.com',
+        subject: 'Linux Node Mailer test',
+        text:'Sent from Node.js app 3' 
     }
-});
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json('Error sending email');
+        } else {
+            console.log('Email sent');
+            res.json('Email sent successfully');
+        }
+    })
+})
 //the end
 
 module.exports =router;

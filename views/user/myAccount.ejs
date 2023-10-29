@@ -1,0 +1,46 @@
+<%
+<!-- variables tabs -->
+const pagetitle ='My account';
+const pageDescription ='My Account';
+%>
+
+<%- include ('../layout/header', {pagetitle }) %>
+<%- include ('../layout/nav') %>
+<div class="container">
+    <%- include('../layout/subheaders', {pageDescription }) %>
+</div>
+
+    
+    <% if(status === "loggedIn"){ %> 
+    <div class=".container">
+        <div class="row">
+            <div class="col-4">
+            <div id="list-example" class="list-group">
+                <a class="list-group-item list-group-item-action" href="#list-item-1">My Profile</a>
+                <a class="list-group-item list-group-item-action" href="#list-item-2">Order History</a>
+                <a class="list-group-item list-group-item-action" href="#list-item-3">Item 3</a>
+                <a class="list-group-item list-group-item-action" href="#list-item-4">Logout</a>
+            </div>
+            </div>
+            <div class="col-8">
+            <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
+                <h4 id="list-item-1">My Profile</h4>
+                <p>...</p>
+                <h4 id="list-item-2">Order History</h4>
+                <p>...</p>
+                <h4 id="list-item-3">Item 3</h4>
+                <p>...</p>
+                <h4 id="list-item-4">Logout</h4>
+                <p> <a href="/logout">logout</a></p>
+            </div>
+            </div>
+        </div>
+    </div>
+    <% } else{ %>
+        <div class="d-flex justify-content-center align-items-center">
+            <p>Please <a href="/login">Login</a> to view account</p>
+        </div>
+    <%}%>
+
+<%- include ('../layout/footer') %>
+<%- include ('../layout/scripts') %>

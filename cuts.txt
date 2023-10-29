@@ -1,0 +1,6 @@
+<!-- <% if(status == 'loggedIn'){ %> -->
+<!-- <% } else{ %>
+            <p>
+                Please <a href="/login">login</a> to checkout! 
+            </p> 
+        <%}%> -->
