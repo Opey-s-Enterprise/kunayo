@@ -81,38 +81,30 @@ const pageDescription = 'Checkout';
 <script>
     document.getElementById("checkout-form").addEventListener("submit", payWithPaystack,false);    
     function payWithPaystack() {
-        const email = document.getElementById("checkout-email").value;
-        const amount = document.getElementById("amount").value;
-        const key = document.getElementById('key').value,
-            name = [document.getElementById("checkout-first-name").value,document.getElementById("checkout-last-name").value],
-            city = document.getElementById("checkout-state").value,
-            phone = document.getElementById("checkout-phone").value,
+        const email = document.getElementById("checkout-email").value,
+            amount = document.getElementById("amount").value,
+            key = document.getElementById('key').value,
+            country = document.getElementById('checkout-country').value,
             address = document.getElementById("checkout-address").value,
-            zipCode = document.getElementById("checkout-zip-code").value
+            zipCode = document.getElementById("checkout-zip-code").value,
+            state = document.getElementById('checkout-state').value,
+            phone = document.getElementById("checkout-phone").value           
             ;       
 
-      const handler = PaystackPop.setup({
-        key: key,
-        email: email,
-        amount: amount * 100,
-        currency: 'NGN',
+        const handler = PaystackPop.setup({
+            key: key,
+            email: email,
+            amount: amount * 100,
+            currency: 'NGN',
             callback: function(response) {
                 const reference = response.reference;
-                const data1 = {
-                                    name: name,
-                                    email: email,
-                                    city: city,
-                                    phone: phone,
-                                    address: address,
-                                    cost: amount
-                                };
-            alert(`Please hold while payment is been confirmed`)            
+                alert(`Please hold while payment is been confirmed`)            
                 fetch('/check-payment/',{
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ reference: reference, data:data1})
+                    body: JSON.stringify({ reference: reference})
                 }).then((response) => response.json())
                 .then((data) => {
                     if(data.staus === 'internal'){
@@ -125,12 +117,11 @@ const pageDescription = 'Checkout';
                     alert(`Your Payment has been confirmed. Your transaction id is: ${data.transactionReference}`);
                         try {
                                 const data1 = {
-                                    name: name,
-                                    email: email,
-                                    city: city,
-                                    phone: phone,
-                                    address: address,
-                                    cost: amount
+                                    phone: phone, 
+                                    country:country,
+                                    address:address,
+                                    zipCode:zipCode,
+                                    state:state
                                 };
                                     fetch('/place_order', {
                                         method: 'post',
@@ -142,7 +133,6 @@ const pageDescription = 'Checkout';
                                 }catch(error) {
                                     console.log(error)
                                 }
-                    // window.href.locator
                     }
                 }).catch((error)=>{
                     console.error(error)
@@ -152,6 +142,8 @@ const pageDescription = 'Checkout';
         },
         });
       handler.openIframe();
+
+      // window.location.href = '/sendMail';
 }
 </script>
 <%- include ('../layout/scripts') %>

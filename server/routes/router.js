@@ -17,13 +17,34 @@ router.get('/logout', logout)
 router.get('/signup', (req,res) => {
     res.render('user/signup');
 });
-router.get('/myAccount', loggedIn, (req,res) => {
-if (req.user){  
-    res.render('user/myAccount',{status:'loggedIn', user:req.user })
-}else{
-    res.render('user/myAccount',{status:'no', user:'nothing' })
-}
-})
+router.get('/myAccount', loggedIn, (req, res) => {
+    if (!req.user || !req.user.id) {
+        res.render('user/myAccount', { status: 'error', error: 'You must be logged in to access this page.' });
+    }
+
+    const userId = req.user.id;
+
+    const query = `
+      SELECT orders.id, orders.cost, DATE_FORMAT(orders.date, '%Y-%m-%d') AS formatted_date, orders.product, orders.quantity, payments.transaction_id AS ref, users_Info.fullName
+      FROM orders
+      INNER JOIN users_Info ON orders.customer_id = users_Info.id
+      INNER JOIN payments ON orders.payment_id = payments.id
+      WHERE orders.customer_id = ?;
+    `;
+
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            console.error('Error fetching order history:', error);
+            res.render('user/myAccount', { status: 'error', error: 'Error fetching order history. Please try again later.' });
+        } else {
+            const userOrderHistory = results;
+            res.render('user/myAccount', { status: 'loggedIn', user: req.user, userOrderHistory });
+        }
+    });
+});
+
+
+  
  
 
 //.../product/
@@ -210,7 +231,7 @@ router.get('/checkout',loggedIn, (req, res) => {
 });
     //...../payment
 // Endpoint to check payment status
-router.post('/check-payment/', async (req, res) => {
+router.post('/check-payment/', loggedIn, async (req, res) => {
     const reference = req.body.reference;
     console.log(`new payment initiated ref is: ${reference}`);
         try {
@@ -224,6 +245,35 @@ router.post('/check-payment/', async (req, res) => {
             });
                 if (response.data.data.status === 'success' && response.data.data.amount === (req.session.total *100)) {
                     const transactionReference = response.data.data.reference;
+                    
+                    const dbVal ={
+                        date: new Date(),
+                    }
+                    const userId = req.user.id;
+
+                    db.connect((err) => {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            const query = `
+                                INSERT INTO payments (transaction_id, date, user_id) VALUES (?,?,?)`;
+                
+                            const values = [
+                                transactionReference,
+                                dbVal.date,
+                                userId
+                            ];
+                
+                            db.query(query, values, (err, result) => {
+                                if (err) {
+                                    console.error('Error inserting data into the database:', err);
+                                } else {
+                                    console.log('Customer ref successfully added to the database');
+                                }
+                            });
+                        }
+                    });
+
                     res.json({status: 'Y', transactionReference });
                     console.log(`ref: ${reference} is verified`)
                 } 
@@ -250,74 +300,126 @@ router.post('/check-payment/', async (req, res) => {
         }
 });
 //..../adding orderr to db and sending mail
-router.post('/place_order', (req, res) => {
+router.post('/place_order', loggedIn, (req, res) => {
     try {
+        // data goes to mysql
+        const userId = req.user.id;       
+
         const checkout_data = {
-            name: req.body.name,
-            email: req.body.email,
-            city: req.body.city,
-            phone: req.body.phone,
-            address: req.body.address,
+            name: req.user.fullName,
+            email:req.user.email,
+            phone: req.body.data.phone,
+            country: req.body.data.country,
+            address: req.body.data.address,
+            zip_code: req.body.data.zipCode,
+            state: req.body.data.state,
             cost: req.session.total,
             status: 'VERIFIED',
             date: new Date(),
-            cart: req.session.cart
+            cart: req.session.cart,
+            product: '',
+            quantity: 0
         };
-        console.log(checkout_data);
+
+        console.log(req.body);
+        if (checkout_data.cart.length > 0) {
+            const productDetails = checkout_data.cart.map(product => `${product.name} (Quantity: ${product.quantity})`).join(', ');
+            checkout_data.product = productDetails;
+            checkout_data.quantity = checkout_data.cart.reduce((total, product) => total + product.quantity, 0);
+        }
+
+        db.connect((err) => {
+            if (err) {
+                console.error(err);
+            } else {
+                const query = `
+                    INSERT INTO orders (name, email, phone, country, address, state, zip_code, status, date, product, quantity, cost, customer_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    
+                const values = [
+                    checkout_data.name,
+                    checkout_data.email,
+                    checkout_data.phone,
+                    checkout_data.country,
+                    checkout_data.address,
+                    checkout_data.state,
+                    checkout_data.zip_code,
+                    checkout_data.status,
+                    checkout_data.date,
+                    checkout_data.product,
+                    checkout_data.quantity,
+                    checkout_data.cost,
+                    userId
+                ];
+    
+                db.query(query, values, (err, result) => {
+                    if (err) {
+                        console.error('Error inserting data into the database:', err);
+                        res.status(500).json('Error inserting data into the database');
+                    } else {
+                        console.log('Customer data successfully added to the database');
+                        res.json('Customer data added successfully');
+                    }
+                });
+            }
+        });
+
+        //then to mails
+                    const nodemailer = require('nodemailer')
+                    const transporter = nodemailer.createTransport({
+                        service: 'Gmail',
+                        auth: {
+                            user: process.env.myEmail,
+                            pass:process.env.myEmailPass,
+                        }
+                    })
+                    const productDetails = checkout_data.cart.map(product => `${product.name} (Quantity: ${product.quantity})`).join(', ');
+
+                    const mailOptions = {
+                        from: process.env.myEmail,
+                        to: 'akereabdulraheem@gmail.com, akunayo7@gmail.com',
+                        subject: 'ALERT: NEW ORDER',
+                        text:`New order details:
+                        Date: ${checkout_data.date}
+
+                        *CUSTOMER DETAILS*
+                        Name: ${checkout_data.name}
+                        Email: ${checkout_data.email}
+                        Phone Number: ${checkout_data.phone}
+
+                        *SHIPPING DETAILS*
+                        Country: ${checkout_data.country}
+                        Address: ${checkout_data.address}
+                        Zip Code :${checkout_data.zip_code}
+                        State: ${checkout_data.state}
+                        Logistic: 
+
+                        *PRODUCT INFO*
+                        Status: ${checkout_data.status}
+                        Cost: ${checkout_data.cost}
+                        Products: ${productDetails}`
+                    }
+
+                    transporter.sendMail(mailOptions, (err, info) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).json('Error sending email');
+                        } else {
+                            console.log('Email sent');
+                            res.json('Email sent successfully');
+                        }
+                    })
     } catch (error) {
         console.log('could not register order data on database')                    
-    }
-
-    // let product_ids = '';  
-    // for(let i=0; i<cart.length; i++){
-    //     product_ids = product_ids + ',' + cart[i].id;
-    // }
-
-    // db.connect((err) => {
-    //     if (err){
-    //         console.log(err)
-    //     }else{
-    //         const query = "INSERT INTO orders(cost,name,email,status,city,address,phone,date,product_ids) VALUES ?";
-    //         const values =[
-    //                 [cost,name,email,status,city,address,phone,date,product_ids]
-    //             ];
-                
-    //          db.query(query,[values],(err,result)=>{
-    //             console.log('Customer Data sucessufully added to Database')
-    //         })
-    //     }
-    // })    
+    }   
 });
 
-router.get('/sendMail', (req,res) => {
+router.get('/loadData', (req,res) => {
     res.render('pages/payment')
 })
-router.post('/sendMail', (req, res)=>{
-    const nodemailer = require('nodemailer')
-    const transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: process.env.myEmail,
-            pass:process.env.myEmailPass,
-        }
-    })
-    const mailOptions = {
-        from: process.env.myEmail,
-        to: 'akereabdulraheem@gmail.com',
-        subject: 'Linux Node Mailer test',
-        text:'Sent from Node.js app 3' 
-    }
-
-    transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json('Error sending email');
-        } else {
-            console.log('Email sent');
-            res.json('Email sent successfully');
-        }
-    })
-})
+router.post('/loadData', (req, res) => {
+    
+});
 //the end
 
 module.exports =router;

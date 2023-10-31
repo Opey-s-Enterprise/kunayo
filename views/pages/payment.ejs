@@ -1,9 +1,9 @@
-<button id="button">send mail</button>
+<button id="button">update</button>
 
 <script>
   const button = ''; 
   document.getElementById('button').addEventListener('click', ()=> {
-    fetch('/sendMail',{
+    fetch('/loadData',{
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',
