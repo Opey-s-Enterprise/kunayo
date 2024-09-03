@@ -23,13 +23,17 @@ router.get('/myAccount', loggedIn, (req, res) => {
     }
 
     const userId = req.user.id;
+    console.log('User:', req.user);
+    console.log('User ID:', userId);
+
 
     const query = `
       SELECT orders.id, orders.cost, DATE_FORMAT(orders.date, '%Y-%m-%d') AS formatted_date, orders.product, orders.quantity, payments.transaction_id AS ref, users_Info.fullName
       FROM orders
       INNER JOIN users_Info ON orders.customer_id = users_Info.id
       INNER JOIN payments ON orders.payment_id = payments.id
-      WHERE orders.customer_id = ?;
+      WHERE orders.customer_id = ?
+      ORDER BY orders.date DESC;
     `;
 
     db.query(query, [userId], (error, results) => {
@@ -37,6 +41,7 @@ router.get('/myAccount', loggedIn, (req, res) => {
             console.error('Error fetching order history:', error);
             res.render('user/myAccount', { status: 'error', error: 'Error fetching order history. Please try again later.' });
         } else {
+            console.log('Order History Results:', results)
             const userOrderHistory = results;
             res.render('user/myAccount', { status: 'loggedIn', user: req.user, userOrderHistory });
         }
@@ -308,11 +313,11 @@ router.post('/place_order', loggedIn, (req, res) => {
         const checkout_data = {
             name: req.user.fullName,
             email:req.user.email,
-            phone: req.body.data.phone,
-            country: req.body.data.country,
-            address: req.body.data.address,
-            zip_code: req.body.data.zipCode,
-            state: req.body.data.state,
+            phone: req.body.phone,
+            country: req.body.country,
+            address: req.body.address,
+            zip_code: req.body.zipCode,
+            state: req.body.state,
             cost: req.session.total,
             status: 'VERIFIED',
             date: new Date(),
@@ -320,6 +325,10 @@ router.post('/place_order', loggedIn, (req, res) => {
             product: '',
             quantity: 0
         };
+
+        console.log('Details',req.session);
+        console.log('User:', req.user);
+        console.log('User ID:', userId);
 
         console.log(req.body);
         if (checkout_data.cart.length > 0) {
@@ -410,10 +419,61 @@ router.post('/place_order', loggedIn, (req, res) => {
                         }
                     })
     } catch (error) {
-        console.log('could not register order data on database')                    
+        console.log('could not register order data on database')
+        console.log('Request body:',req.body);
+        console.log('User:', req.user);
+        console.log('User ID:', userId);
+                    
     }   
 });
 
+//............../checkout form validation/
+const { body, validationResult } = require('express-validator');
+const isValidZipCode = (country, zipCode) => {
+    // Define regular expression patterns for zip codes based on country
+    const zipCodePatterns = {
+        'US': /^\d{5}$/,
+        'NG': /^\d{6}$,          // 6-digit //Nigerian zip code
+        // Add more country patterns as needed
+    };
+
+    // Check if the provided country has a matching pattern
+    if (zipCodePatterns[country]) {
+        return zipCodePatterns[country].test(zipCode);
+    }
+
+    // If the country is not recognized, return false (validation fails)
+    return false;
+};
+// Validation rules for the form fields
+const validationRules = [
+    body('lastName').notEmpty().withMessage('Last Name is required'),
+    body('firstName').notEmpty().withMessage('First Name is required'),
+    body('email').isEmail().withMessage('Invalid Email'),
+    body('phone').notEmpty().withMessage('Phone Number is required'),
+    body('country').notEmpty().withMessage('Country is required'),
+    body('address').notEmpty().withMessage('Address is required'),
+    body('zipCode').custom(isValidZipCode).withMessage('Invalid Zip Code'),
+    body('state').notEmpty().withMessage('State is required'),
+    body('amount').notEmpty().withMessage('Amount is required'),
+    body('key').notEmpty().withMessage('Key is required'),
+];
+
+router.post('/validate-form', validationRules, (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    // If the form data is valid, you can proceed to process it
+    const formData = req.body;
+
+    res.sendStatus(200); // Success status code
+});
+
+
+///test
 router.get('/loadData', (req,res) => {
     res.render('pages/payment')
 })

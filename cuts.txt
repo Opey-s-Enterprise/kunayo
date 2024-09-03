@@ -1,6 +1,194 @@
-<!-- <% if(status == 'loggedIn'){ %> -->
-<!-- <% } else{ %>
-            <p>
-                Please <a href="/login">login</a> to checkout! 
-            </p> 
-        <%}%> -->
+<form id="checkout-form" onsubmit="submitForm(event)">
+    <!-- Your form fields here -->
+
+    <div class="d-flex justify-content-center align-items-center form-group checkout-small-element">
+        <input type="hidden" id="amount" value="<%= total %>">
+        <input type="hidden" id="key" value="<%= publicKey %>">
+        <button type="submit" id="checkout-btn" class="btn">Pay now</button>
+    </div>
+</form>
+
+<script>
+    async function submitForm(event) {
+        event.preventDefault();
+
+        const lastName = document.getElementById("checkout-last-name").value;
+        const firstName = document.getElementById("checkout-first-name").value;
+        const email = document.getElementById("checkout-email").value;
+        const phone = document.getElementById("checkout-phone").value;
+        const country = document.getElementById("checkout-country").value;
+        const address = document.getElementById("checkout-address").value;
+        const zipCode = document.getElementById("checkout-zip-code").value;
+        const state = document.getElementById("checkout-state").value;
+        const amount = document.getElementById("amount").value;
+        const key = document.getElementById("key").value;
+
+        const formData = {
+            lastName,
+            firstName,
+            email,
+            phone,
+            country,
+            address,
+            zipCode,
+            state,
+            amount,
+            key
+        };
+
+        const response = await fetch('/validate-form', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+            alert('Form submitted successfully. Redirect or handle as needed.');
+            // You can redirect the user to a success page or perform further actions here.
+        } else {
+            alert('Form validation failed. Please check your data.');
+        }
+    }
+</script>
+
+
+
+// Add this route to your server code
+app.post('/validate-form', (req, res) => {
+    // Validate and process the form data here
+    const formData = req.body;
+
+    // Perform your server-side validation here, e.g., check required fields and data integrity
+
+    if (/* Your validation conditions here */) {
+        // Form data is valid, process it and send a success response
+        // You can insert the data into the database and send an email here
+        res.sendStatus(200); // Success status code
+    } else {
+        // Form data is not valid, send an error response
+        res.status(400).send('Form validation failed'); // Bad Request status code
+    }
+});
+
+<%
+const pagetitle = 'Checkout';
+const pageDescription = 'Checkout';
+%>
+
+<%- include ('../layout/header', { pagetitle }) %>
+
+<%- include ('../layout/nav') %>
+
+<section class="my-2 py-3 checkout">
+
+    <div class="container text-center mt-1 pt-5">
+        <%- include('../layout/subheaders', { pageDescription }) %>
+        <hr class="mx-auto">
+    </div>
+
+    <div class="container">
+        <% if (typeof total !== 'undefined') { %>
+            <% if (status === "loggedIn") { %>
+                <form id="checkout-form" onsubmit="submitForm(event)">
+
+                    <h3>Contact</h3>
+                    <div class="row">
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-last-name" name="last-name" placeholder="Last Name" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-first-name" name="first-name" placeholder="First Name" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <input type="email" class="rounded-pill form-control" id="checkout-email" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="col form-group checkout-small-element">
+                            <input type="tel" class="rounded-pill form-control" id="checkout-phone" name="phone" placeholder="Phone Number" required pattern="[0-9]{11}">
+                        </div>
+                    </div>
+
+                    <h3>Shipping Address</h3>
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="text" class="rounded-pill form-control" id="checkout-country" name="country" placeholder="Country" required>
+                        </div>
+                        <div class="col-12">
+                            <input type="text" class="rounded-pill form-control" id="checkout-address" name="address" placeholder="Address" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-zip-code" name="zip-code" placeholder="Zip Code" required pattern="[0-9]{6}">
+                        </div>
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-state" name="state" placeholder="State" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center align-items-center form-group checkout-small-element">
+                        <input type="hidden" id="amount" value="<%= total %>">
+                        <input type="hidden" id="key" value="<%= publicKey %>">
+                        <input type="button" id="checkout-btn" value="Pay now" class="btn">
+                    </div>
+                </form>
+            <% } else { %>
+                <div>
+                    <p>Please <a href="/login">Login</a> to checkout</p>
+                </div>
+            <% } %>
+        <% } else { %>
+            <p>Your cart is empty.</p>
+        <% } %>
+    </div>
+</section>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+    function submitForm(event) {
+        event.preventDefault();
+
+        const lastName = document.getElementById("checkout-last-name").value;
+        const firstName = document.getElementById("checkout-first-name").value;
+        const email = document.getElementById("checkout-email").value;
+        const phone = document.getElementById("checkout-phone").value;
+        const country = document.getElementById("checkout-country").value;
+        const address = document.getElementById("checkout-address").value;
+        const zipCode = document.getElementById("checkout-zip-code").value;
+        const state = document.getElementById("checkout-state").value;
+        const amount = document.getElementById("amount").value;
+        const key = document.getElementById("key").value;
+
+        if (validateForm(lastName, firstName, email, phone, country, address, zipCode, state)) {
+            // Check if Paystack script is already loaded
+            if (typeof PaystackPop !== 'undefined') {
+                payWithPaystack();
+            } else {
+                console.log("Paystack script is not loaded.");
+            }
+        } else {
+            alert('Please fill all fields with valid data.');
+        }
+    }
+
+    function validateForm(lastName, firstName, email, phone, country, address, zipCode, state) {
+        // Implement your validation logic here
+        // You can use regular expressions or other validation methods
+        if (lastName.trim() === '' || firstName.trim() === '' || email.trim() === '' || phone.trim() === '' || country.trim() === '' || address.trim() === '' || zipCode.trim() === '' || state.trim() === '') {
+            return false;
+        }
+        return true;
+    }
+
+    function payWithPaystack() {
+        // Payment handling code
+        // ...
+    }
+</script>
+<%- include ('../layout/scripts') %>
+<%- include ('../layout/footer') %>

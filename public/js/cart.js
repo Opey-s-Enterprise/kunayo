@@ -88,18 +88,18 @@ function updateCartTable(cartData) {
 }
 
 // Event listeners for updating and removing cart items
-$(document).ready(function () {
-    $(document).on('click', '.update-cart-item', function () {
-        const itemId = $(this).data('item-id');
-        const newQuantity = parseInt(
-            $(this).closest('tr').find('.quantity-input').val(),
-            10
-        );
-        updateCartItem(itemId, newQuantity);
-    });
+// $(document).ready(function () {
+//     $(document).on('click', '.update-cart-item', function () {
+//         const itemId = $(this).data('item-id');
+//         const newQuantity = parseInt(
+//             $(this).closest('tr').find('.quantity-input').val(),
+//             10
+//         );
+//         updateCartItem(itemId, newQuantity);
+//     });
 
-    $(document).on('click', '.remove-cart-item', function () {
-        const itemId = $(this).data('item-id');
-        removeCartItem(itemId);
-    });
-});
+//     $(document).on('click', '.remove-cart-item', function () {
+//         const itemId = $(this).data('item-id');
+//         removeCartItem(itemId);
+//     });
+// });

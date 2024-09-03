@@ -1,0 +1,38 @@
+transfer db
+	mysqldumb then mysql
+	
+run node app
+	nohup node ...
+	nohup node server/app.js > serverlogs.log 2>&1 &
+
+🔴️ISSUES🔴️
+⚒️fix front end
+	⚒️fix font - kumbh sans and jost
+	⚒️fix styling all pages
+⚒️fix slow loading issues
+⚒️fix user data collection
+	⚒️fix product and user details sends to mail
+⚒️fix cart to add once and not twice click
+⚒️fix  my acct page
+	⚒️need to update auto when you purchase is made.
+⚒️update  faq page
+⚒️update  del page
+⚒️google tracking
+🟩️fix https
+🟩️FIX PAYMENT - PAYSTACK
+🟩️let server log error on a book
+🟩️stop server from quitting - now host on a process: nohup
+🟩️updated T/C
+
+
+📤️send -
+	delivery.ejs, about.ejs
+
+
+some line of code
+ps aux | grep node
+kill PID
+nohup node server/app.js >> serverlogs.log 2>&1 &
+nvm install node 
+nvm use node      # Use the latest version
+npm update lru-cache mysql2
