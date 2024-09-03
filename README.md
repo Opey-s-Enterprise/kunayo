@@ -15,7 +15,7 @@ stack deployed includes:
 - apache
 - paystack
 - google analytics
-- aws (may change)
+- azure
 
 * Notes
 This repo shall have 2 branches namely
