@@ -192,3 +192,111 @@ const pageDescription = 'Checkout';
 </script>
 <%- include ('../layout/scripts') %>
 <%- include ('../layout/footer') %>
+
+
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        hr {
+            margin: 20px 0;
+        }
+
+        #subtotal {
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            background: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Select Items</h2>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" class="item-checkbox" data-price="5.00"> Tap - $5.00
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" class="item-checkbox" data-price="7.00"> Bottle - $7.00
+            </label>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="rounded-pill form-control" id="checkout-zip-code" name="zip-code" placeholder="Zip Code" required>
+            </div>
+            <div class="col form-group checkout-small-element">
+                <input type="text" class="rounded-pill form-control" id="checkout-state" name="state" placeholder="State" required>
+            </div>
+        </div>
+        <hr>
+        <div class="form-group">
+            <label for="subtotal">Subtotal:</label>
+            <input type="text" id="subtotal" readonly>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const subtotalInput = document.getElementById('subtotal');
+
+            function updateSubtotal() {
+                let subtotal = 0;
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        subtotal += parseFloat(checkbox.getAttribute('data-price'));
+                    }
+                });
+                subtotalInput.value = `$${subtotal.toFixed(2)}`;
+            }
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateSubtotal);
+            });
+
+            // Initialize subtotal on page load
+            updateSubtotal();
+        });
+    </script>
+</body>
+</html>

@@ -55,9 +55,7 @@ router.get('/myAccount', loggedIn, (req, res) => {
 //.../product/
 router.get('/', (req,res) => {
     db.query('select * from products', (err, result) => {
-    res.render('product/product_page', {result:result, pagetitle: 'New_Arrivals', pageDescription: 'New_Arrivals'})
-    // Product.getAll((products) => {
-    // res.render('product/new_arrival', {productSection: products})
+    res.render('pages/Home')
 });
 }); 
 router.get('/accessories', (req,res) => {
@@ -108,7 +106,6 @@ router.get('/t&c', (req,res) => {
 router.get('/delivery', (req,res) => {
     res.render('pages/delivery')
 });
-
 
 //...../cart-logic
 function isProductInCart(cart, productId){

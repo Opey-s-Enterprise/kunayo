@@ -6,27 +6,34 @@ run node app
 	nohup node server/app.js > serverlogs.log 2>&1 &
 
 🔴️ISSUES🔴️
+⚒️On the shipping page do auto select country and date
+⚒️on the cart page add shipping cost - subtotal - total
+⚒️make the checkout text cutomize in a button
 ⚒️fix front end
 	⚒️fix font - kumbh sans and jost
 	⚒️fix styling all pages
-⚒️fix slow loading issues
+	⚒️make product click so they can view more about the product	
 ⚒️fix user data collection
 	⚒️fix product and user details sends to mail
 ⚒️fix cart to add once and not twice click
 ⚒️fix  my acct page
 	⚒️need to update auto when you purchase is made.
-⚒️update  faq page
-⚒️update  del page
-⚒️google tracking
+⚒️fix slow loading issues
+
 🟩️fix https
 🟩️FIX PAYMENT - PAYSTACK
 🟩️let server log error on a book
 🟩️stop server from quitting - now host on a process: nohup
 🟩️updated T/C
+🟩️google tracking
+🟩️change phone number
+🟩️update  faq page
+🟩️update  del page
+🟩️logo adjustment and make clickable
 
 
-📤️send -
-	delivery.ejs, about.ejs
+📤️send -nav del
+	about.ejs
 
 
 some line of code

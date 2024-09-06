@@ -73,7 +73,8 @@ const pageDescription = 'Your Cart';
             </tr>
         <% }) %>
 
-            <% if(status === "loggedIn"){ %> 
+            <% if(status === "loggedIn"){ %>
+                                
                 <div class="cart-total">
                     <!-- <div>
                         <form action="">
@@ -85,10 +86,53 @@ const pageDescription = 'Your Cart';
                         <form action=""></form>
                     </div> -->
                     <table class='d-flex justify-content-center align-items-center'>
-                        <tr>
-                            <td>Total:</td>
-                            <td>  NGN <%= total %></td>
-                        </tr>
+
+                        <div class="container">
+                            <h2>Shipping mode</h2>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" class="item-checkbox" data-price="5.00"> Lagos park delivery: NGN2500
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Lagos doorstep delivery: NGN5000
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Lagos doorstep delivery: NGN5000
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Ibadan delivery: NGN1500
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Other states delivery: NGN3000
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> International(Packages below 1.5kg): $50
+                                    </label>
+                                </div>
+        
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subtotal">Subtotal:</label>
+                                <input type="text" id="subtotal" readonly>
+                            </div>
+
+                            <tr>
+                                <td>Total:</td>
+                                <td>  NGN <%= total %></td>
+                            </tr>
+                        </div>
+                       
                     </table>
                 </div>
             
