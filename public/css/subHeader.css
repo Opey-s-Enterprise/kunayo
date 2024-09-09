@@ -1,0 +1,16 @@
+.underline-effect {
+    position: relative;
+    display: inline-block;
+    text-decoration: none; /* Remove the default underline */
+}
+
+.underline-effect::after {
+    content: "";
+    position: absolute;
+    bottom: -10px; /* Adjust this value to control the distance from text */
+    left: 50%; /* Start at the middle */
+    transform: translateX(-50%); /* Center the underline */
+    width: 70%; /* Adjust the width to control how far it extends */
+    height:3px; /* Adjust the height for the thickness of the underline */
+    background-color: red; /* Adjust the color to your preference */
+}

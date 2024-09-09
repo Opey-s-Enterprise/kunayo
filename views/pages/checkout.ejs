@@ -1,0 +1,139 @@
+<%
+const pagetitle = 'Checkout';
+const pageDescription = 'Checkout';
+%>
+
+<%- include ('../layout/header', { pagetitle }) %>
+<%- include ('../layout/nav') %>
+
+<section class="my-2 py-3 checkout">
+    <div class="cont text-center mt-1 pt-5">
+        <%- include('../layout/subheaders', {pageDescription }) %>
+        <hr class="mx-auto">
+    </div>
+
+    <div class="container">
+        <% if (typeof total !== 'undefined') { %>
+            <% if (status === "loggedIn") { %> 
+                <form id="checkout-form">
+                    <h3>Contact</h3>
+                    <div class="row">
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-last-name" name="last-name" placeholder="Last Name" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-first-name" name="first-name" placeholder="First Name" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-email" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-phone" name="phone" placeholder="Phone Number" required>
+                        </div>
+                    </div>
+
+                    <h3>Shipping Address</h3>
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="text" class="rounded-pill form-control" id="checkout-country" name="country" placeholder="Country" required>
+                        </div>
+                        <div class="col-12">
+                            <input type="text" class="rounded-pill form-control" id="checkout-address" name="address" placeholder="Address" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="rounded-pill form-control" id="checkout-zip-code" name="zip-code" placeholder="Zip Code" required>
+                        </div>
+                        <div class="col form-group checkout-small-element">
+                            <input type="text" class="rounded-pill form-control" id="checkout-state" name="state" placeholder="State" required>
+                        </div>
+                    </div>
+
+                    
+                    <div class="d-flex justify-content-center align-items-center form-group checkout-small-element">
+                        <input type="hidden" id="amount" value="<%= total %>">
+                        <input type="hidden" id="key" value="<%= publicKey %>">
+                        <input type="button" id="checkout-btn" value="Pay now" class="btn">
+                    </div>
+                </form>
+            <% } else { %>
+                <div>
+                    <p>Please <a href="/login">Login</a> to checkout</p>
+                </div>
+            <% } %>
+        <% } else { %>
+            <p>Your cart is empty.</p>
+        <% } %>
+    </div>
+</section>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<script>
+document.getElementById('checkout-btn').addEventListener('click', function() {
+    payWithPaystack();
+});
+
+function payWithPaystack() {
+    const email = document.getElementById("checkout-email").value;
+    const amount = document.getElementById("amount").value * 100; // Multiply amount by 100
+    const key = document.getElementById('key').value;
+    const country = document.getElementById('checkout-country').value;
+    const address = document.getElementById("checkout-address").value;
+    const zipCode = document.getElementById("checkout-zip-code").value;
+    const state = document.getElementById('checkout-state').value;
+    const phone = document.getElementById("checkout-phone").value;
+
+    const handler = PaystackPop.setup({
+        key: key,
+        email: email,
+        amount: amount,
+        currency: 'NGN',
+        callback: function(response) {
+            const reference = response.reference;
+            alert(`Please hold while payment is being confirmed`);            
+            fetch('/check-payment/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reference: reference })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.status === 'internal') {
+                    alert('Internal Server Error');
+                } else if (data.status === 'N') {
+                    alert('Payment verification failed. Contact us for further Details');
+                } else if (data.status === 'Y') {
+                    alert(`Your Payment has been confirmed. Your transaction id is: ${data.transactionReference}`);
+                    fetch('/place_order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            phone, 
+                            country,
+                            address,
+                            zipCode,
+                            state
+                        })
+                    }).catch(error => console.error(error));
+                }
+            }).catch(error => console.error(error));
+        },
+        onClose: function() {
+            alert('Transaction was not completed, window closed.');
+        }
+    });
+    handler.openIframe();
+}
+</script>
+
+<%- include ('../layout/scripts') %>
+<%- include ('../layout/footer') %>

@@ -1,0 +1,17 @@
+<button id="button">update</button>
+
+<script>
+  const button = ''; 
+  document.getElementById('button').addEventListener('click', ()=> {
+    fetch('/loadData',{
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({}),
+                }).then((response) => response.json())
+                .then((data) =>{
+                  alert(data)
+                })
+  }) 
+</script>

@@ -1,0 +1,31 @@
+<%
+<!-- variables tabs -->
+const pagetitle ='login';
+const pageDescription = 'Login';
+%>
+
+<%- include ('../layout/header', {pagetitle }) %>
+
+<%- include ('../layout/nav') %>
+
+<div class="container">
+    <%- include('../layout/subheaders', {pageDescription }) %>
+        <form action="/" method="post" id="login-form">
+            <div class="input-group">
+                <input type="text" class="rounded-pill" id="username" name="username" placeholder="Email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" class="rounded-pill" id="password" name="password" placeholder="Password" required>
+            </div>
+
+            <div class="alert alert-danger rounded-pill" role="alert" id="error" style="display: none;"></div>
+            <div class="alert alert-success rounded-pill" role="alert" id="success" style="display: none;"></div>
+
+            <button type="button" class="btn btn-link rounded-pill" id="signup"><a href="/signup">Sign Up</a></button>
+            <button type="button" class="btn btn-link rounded-pill" id="login">login</button>
+        </form>
+</div>
+
+<%- include ('../layout/footer') %>
+
+<%- include ('../layout/scripts') %>

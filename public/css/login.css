@@ -1,0 +1,55 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.input-group {
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+}
+
+input[type="text"],
+input[type="password"]{
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(160, 95, 95, 0.375);
+    border-radius: 10px;
+    background-color: beige;
+}
+
+#signup, #signup a {
+    background-color: black;
+    border-radius: 13px;
+    color: white;
+    text-decoration: none;
+}
+
+#login{
+    background-color: white;
+    border: 1px solid red;
+    /* border-radius: 13px; */
+    color: red;
+    text-decoration: none;
+}
+
+.btn.btn-link {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 40%;
+    padding: 10px;
+    /* margin;  */
+}
+
+button:hover {
+    background-color: #0056b3;
+}

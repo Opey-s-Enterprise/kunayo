@@ -1,0 +1,40 @@
+<%- include ('../layout/header', {pagetitle }) %>
+
+<%- include ('../layout/nav') %>
+
+<div class="container">
+    <%- include('../layout/subheaders', {pageDescription }) %>
+</div>
+<div class=".container-fluid">
+    <div class="row text-center">
+        <% result.forEach(function(item) { %>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 margin">
+            <div>
+                <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
+                
+                <% if(item.sale_price){ %>
+                <h3>NGN<strong class="red"><%= item.sale_price %></strong></h3>             
+                <h3 style="text-decoration: line-through;">NGN<strong class="red"><%= item.price %></strong></h3>
+                <% }else{ %>
+                    <h3>NGN<strong class="red"><%= item.price %></strong></h3>
+                <% } %>
+
+                <span><%= item.name %></span>
+                <form method="post" action="/add-to-cart">
+                    <input type="hidden" name="product_image" value="<%= item.image %>">
+                    <input type="hidden" name="product_id" value="<%= item.id %>">
+                    <input type="hidden" name="product_name" value="<%= item.name %>">
+                    <input type="hidden" name="product_price" value="<%= item.price %>">
+                    <input type="hidden" name="quantity" value="1">
+                    <br>
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                </form>
+            </div>            
+        </div>
+        <% }) %>
+    </div>
+</div>
+<br>
+<%- include ('../layout/loading') %>
+<%- include ('../layout/footer') %>
+<%- include ('../layout/scripts') %>

@@ -1,4 +1,6 @@
 # Made_by_ky
+A shopping website
+Made_by_ky
 
 A shopping website for the brand-Made_by_ky
 
