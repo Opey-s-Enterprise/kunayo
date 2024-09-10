@@ -5,13 +5,15 @@
 <div class="container">
     <%- include('../layout/subheaders', {pageDescription }) %>
 </div>
-<div class=".container-fluid">
+<div class="container-fluid">
     <div class="row text-center">
         <% result.forEach(function(item) { %>
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 margin">
             <div>
-                <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
-                
+                <a href="/product-details?product_id=<%= item.id %>">
+                    <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
+                </a>
+
                 <% if(item.sale_price){ %>
                 <h3>NGN<strong class="red"><%= item.sale_price %></strong></h3>             
                 <h3 style="text-decoration: line-through;">NGN<strong class="red"><%= item.price %></strong></h3>

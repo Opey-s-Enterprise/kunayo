@@ -88,6 +88,35 @@ router.get('/outerwear', (req,res) => {
         res.render('product/product_page', {result:result, pagetitle: 'Outerwear', pageDescription: 'Outerwear'})
     });
 });
+router.get('/product-details', (req, res) => {
+    const productId = req.query.product_id;
+    if (!productId) {
+        return res.status(400).send('Product ID is required');
+    }
+    const query = 'SELECT * FROM products WHERE id = ?';
+    db.query(query, [productId], (error, results) => {
+        if (error) {
+            console.error('Error querying the database:', error);
+            return res.status(500).send('Server error');
+        }
+
+        if (results.length > 0) {
+            const product = results[0];
+
+            // Check if image data exists and encode it in Base64
+            if (product.image) {
+                product.imageBase64 = product.image.toString('base64');
+                product.imageMimeType = 'image/jpeg';
+            }
+
+            const pagetitle = `Product Details - ${product.name}`;
+            res.render('product/product-details', { product, pagetitle });
+        } else {
+            res.status(404).send('Product not found');
+        }
+    });
+});
+
 
 
 //..../pages
