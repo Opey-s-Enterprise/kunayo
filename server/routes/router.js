@@ -106,10 +106,10 @@ router.get('/product-details', (req, res) => {
             // Check if image data exists and encode it in Base64
             if (product.image) {
                 product.imageBase64 = product.image.toString('base64');
-                product.imageMimeType = 'image/jpeg'; // Change this according to the actual MIME type of the image
+                product.imageMimeType = 'image/jpeg';
             }
 
-            const pagetitle = `Product Details - ${product.name}`; // Example title based on product name
+            const pagetitle = `Product Details - ${product.name}`;
             res.render('product/product-details', { product, pagetitle });
         } else {
             res.status(404).send('Product not found');
