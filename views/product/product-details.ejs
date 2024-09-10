@@ -1,0 +1,20 @@
+<%- include('../layout/header', { pagetitle: pagetitle }) %>
+<%- include('../layout/nav') %>
+
+<div class="product-details">
+    <% if (product.imageBase64) { %>
+        <img src="data:<%= product.imageMimeType %>;base64,<%= product.imageBase64 %>" alt="<%= product.name %>" class="img-fluid">
+    <% } else { %>
+        <p>No image available for this product.</p>
+    <% } %>
+
+    <h1><%= product.name %></h1>
+    <p>Price: $<%= product.price %></p>
+    <p>Description: <%= product.description %></p>
+</div>
+
+
+
+<%- include ('../layout/loading') %>
+<%- include ('../layout/footer') %>
+<%- include ('../layout/scripts') %>
