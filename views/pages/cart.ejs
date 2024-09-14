@@ -1,11 +1,9 @@
-<!-- cart.ejs -->
 <%
 const pagetitle = 'Cart';
 const pageDescription = 'Your Cart';
 %>
 
 <%- include ('../layout/header', { pagetitle }) %>
-
 <%- include ('../layout/nav') %>
 
 <div class="container">
@@ -73,89 +71,87 @@ const pageDescription = 'Your Cart';
             </tr>
         <% }) %>
 
-            <% if(status === "loggedIn"){ %>
-                                
-                <div class="cart-total">
-                    <!-- <div>
-                        <form action="">
-                            <input type="hidden" value>
-                        </form>
-                        <form action=""></form>
-                        <form action=""></form>
-                        <form action=""></form>
-                        <form action=""></form>
-                    </div> -->
-                    <table class='d-flex justify-content-center align-items-center'>
+        <% if(status === "loggedIn"){ %>
 
-                        <div class="container">
-                            <h2>Shipping mode</h2>
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" class="item-checkbox" data-price="5.00"> Lagos park delivery: NGN2500
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Lagos doorstep delivery: NGN5000
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Lagos doorstep delivery: NGN5000
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Ibadan delivery: NGN1500
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> Other states delivery: NGN3000
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" class="item-checkbox" data-price="7.00"> International(Packages below 1.5kg): $50
-                                    </label>
-                                </div>
-        
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="subtotal">Subtotal:</label>
-                                <input type="text" id="subtotal" readonly>
-                            </div>
-
+            <div class="cart-total">
+                <table class='d-flex justify-content-center align-items-center' style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Shipping Mode</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <form id="shipping-form" method="post" action="/update-shipping">
                             <tr>
-                                <td>Total:</td>
-                                <td>  NGN <%= total %></td>
+                                <td>
+                                    <input type="radio" id="lagos-park" name="shipping_location" value="lagos_park" <% if (shippingLocation === 'lagos_park') { %> checked <% } %> onchange="submitForm()">
+                                    <label for="lagos-park">Lagos park delivery: NGN2500</label>
+                                </td>
                             </tr>
-                        </div>
-                       
-                    </table>
+                            <tr>
+                                <td>
+                                    <input type="radio" id="lagos-doorstep" name="shipping_location" value="lagos_doorstep" <% if (shippingLocation === 'lagos_doorstep') { %> checked <% } %> onchange="submitForm()">
+                                    <label for="lagos-doorstep">Lagos doorstep delivery: NGN5000</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" id="ibadan" name="shipping_location" value="ibadan" <% if (shippingLocation === 'ibadan') { %> checked <% } %> onchange="submitForm()">
+                                    <label for="ibadan">Ibadan delivery: NGN1500</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" id="other-states" name="shipping_location" value="other_states" <% if (shippingLocation === 'other_states') { %> checked <% } %> onchange="submitForm()">
+                                    <label for="other-states">Other states delivery: NGN3000</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" id="international" name="shipping_location" value="international" <% if (shippingLocation === 'international') { %> checked <% } %> onchange="submitForm()">
+                                    <label for="international">International (Packages below 1.5kg): $50</label>
+                                </td>
+                            </tr>
+                        </form>
+                    </tbody>
+                </table>
+
+                <div class="form-group">
+                    <label for="subtotal">Subtotal:</label>
+                    <input type="text" id="subtotal" readonly value="NGN <%= subTotal %>">
                 </div>
-            
+
+                <div class="form-group">
+                    <label for="total">Total:</label>
+                    <input type="text" id="total" readonly value="NGN <%= total %>">
+                </div>
+
                 <div class="d-flex justify-content-center align-items-center checkout-container">
                     <form method="get" action="/checkout">
-                        <input type="submit" class="btn checkout-btn" value="checkout" name=""> 
+                        <input type="submit" class="btn checkout-btn" value="Checkout"> 
                     </form>
                 </div>
-            
-            <% } else{ %>
-                    <div>
-                        <p>Please <a href="/login">Login</a> to checkout</p>
-                    </div>
-            <%}%>
-        
+
+            </div>
+
+        <% } else { %>
+            <div>
+                <p>Please <a href="/login">Login</a> to checkout</p>
+            </div>
+        <% } %>
 
     <% } else { %>
         <p>You have no items in your shopping cart.</p>
         <a href="/new_arrival">Go to shop</a>
     <% } %>
-</table>
+    </table>
 </div>
-</section>
+
+<script>
+    function submitForm() {
+        document.getElementById('shipping-form').submit();
+    }
+</script>
 
 <%- include ('../layout/footer') %>
 <%- include ('../layout/scripts') %>

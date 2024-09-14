@@ -117,8 +117,6 @@ router.get('/product-details', (req, res) => {
     });
 });
 
-
-
 //..../pages
 router.get('/faq', (req,res) => {
     res.render('pages/FAQs')
@@ -135,118 +133,161 @@ router.get('/t&c', (req,res) => {
 router.get('/delivery', (req,res) => {
     res.render('pages/delivery')
 });
-
-//...../cart-logic
-function isProductInCart(cart, productId){
-    for(let i=0; i<cart.length; i++){
-        if(cart[i].id == productId){
-            return true;
-        }
-    }
-    return false;
+// Utility Functions
+function isProductInCart(cart, productId) {
+    return cart.some(item => item.id === productId);
 }
-function calculateTotal(cart, req){
-    total = 0;
-    for (let i =0; i<cart.length; i++){
-        if (cart[i].sale_price){
-            total = total + (cart[i].sale_price * cart[i].quantity);
-        }else{
-            total = total + (cart[i].price * cart[i].quantity);
-        }
+
+function calculateTotal(cart, req) {
+    let subTotal = 0;
+
+    // Calculate subTotal
+    for (const item of cart) {
+        const price = item.sale_price || item.price;
+        subTotal += price * item.quantity;
     }
+
+    // Get shipping cost and calculate total
+    const shippingCost = parseFloat(req.session.shippingCost) || 0;
+    const total = parseFloat(subTotal) + shippingCost;
+    
+
+    // Save total in session
+    req.session.subTotal = subTotal;
     req.session.total = total;
+
     return total;
 }
-router.post('/add-to-cart', (req, res) => {
-    const
-        productId = req.body.product_id,
-        productName = req.body.product_name,
-        productPrice = parseFloat(req.body.product_price),
-        productImage = req.body.product_image,
-        productQuantity =req.body.quantity,
-        productSalePrice = req.body.sale_price
-        product = {
-            id:productId, name: productName, price: productPrice, quantity:productQuantity, image: productImage, sale_price:productSalePrice
-        };
-  
-    if(req.session.cart) {
-        const cart = req.session.cart;
 
-        if(!isProductInCart(cart, productId)){
-            cart.push(product);
-        }
-    }else{
+// Routes
+router.post('/add-to-cart', (req, res) => {
+    const {
+        product_id: productId,
+        product_name: productName,
+        product_price: productPrice,
+        product_image: productImage,
+        quantity: productQuantity,
+        sale_price: productSalePrice
+    } = req.body;
+
+    const product = {
+        id: productId,
+        name: productName,
+        price: parseFloat(productPrice),
+        quantity: parseInt(productQuantity, 10),
+        image: productImage,
+        sale_price: parseFloat(productSalePrice) || undefined
+    };
+
+    if (!req.session.cart) {
         req.session.cart = [];
-        const cart = req.session.cart;
     }
 
     const cart = req.session.cart;
-    calculateTotal(cart,req);
+
+    if (!isProductInCart(cart, productId)) {
+        cart.push(product);
+    }
+
+    calculateTotal(cart, req);
 
     res.redirect(req.get('Referer'));
-
 });
-router.get('/cart', loggedIn, (req,res) => {
+
+router.get('/cart', loggedIn, (req, res) => {
     if (!req.session) {
         res.status(500).send('Session is not properly initialized');
         return;
     }
-         if (req.user){        
-            var cart = req.session.cart,
-                total = req.session.total;
-            res.render('pages/cart', {cart:cart, total:total, status:'loggedIn', user:req.user})     
-        }else{        
-            var cart = req.session.cart,
-                total = req.session.total;
-                
-            res.render('pages/cart', {cart:cart, total:total, status:'no', user:'nothing'})
-        }
-    
-    
+
+    // Retrieve values from the session
+    const cart = req.session.cart || [];
+    const subTotal = req.session.subTotal || 0;
+    const total = req.session.total || 0;
+    const shippingLocation = req.session.shippingLocation || null;
+    const userStatus = req.user ? 'loggedIn' : 'no';
+
+    // Render the cart page with the retrieved values
+    res.render('pages/cart', {
+        cart,
+        subTotal,         // Send subTotal to the view
+        total,            // Send total to the view
+        shippingLocation,
+        status: userStatus,
+        user: req.user || 'nothing'
+    });
 });
+
 router.post('/remove_product', (req, res) => {
-    const id = req.body.id,
-        cart = req.session.cart;
+    const { id } = req.body;
+    const cart = req.session.cart || [];
 
-        for (let i=0; i<cart.length; i++){
-            if(cart[i].id == id){
-                cart.splice(cart.indexOf(i),1)
-            }
-        }
-        calculateTotal(cart,req);
-        res.redirect('/cart');
-})
-router.post('/edit_product_quantity', (req,res) =>{
-    const id =req.body.id,
-        quantity = req.body.quantity,
-        increase_btn = req.body.increaseProductQuantity,
-        decrease_btn = req.body.decreaseProductQuantity,
-        cart = req.session.cart;
+    const index = cart.findIndex(item => item.id === id);
+    if (index !== -1) {
+        cart.splice(index, 1);
+    }
 
-        if(increase_btn){
-            for(let i=0; i<cart.length; i++){
-                if (cart[i].id == id){
-                    if(cart[i].quantity > 0){
-                        cart[i].quantity = parseInt(cart[i].quantity)+1;
-                    }
-                }
-            }
+    calculateTotal(cart, req);
+
+    res.redirect('/cart');
+});
+
+router.post('/edit_product_quantity', (req, res) => {
+    const { id, increaseProductQuantity, decreaseProductQuantity } = req.body;
+    const cart = req.session.cart || [];
+
+    const item = cart.find(item => item.id === id);
+    if (item) {
+        if (increaseProductQuantity) {
+            item.quantity += 1;
         }
 
-        if(decrease_btn){
-            for(let i=0; i<cart.length; i++){
-                if (cart[i].id == id){
-                    if(cart[i].quantity > 1 ){
-                        cart[i].quantity = parseInt(cart[i].quantity)-1;
-                    }
-                }
-            }
+        if (decreaseProductQuantity && item.quantity > 1) {
+            item.quantity -= 1;
+        }
+    }
+
+    calculateTotal(cart, req);
+
+    res.redirect('/cart');
+});
+
+
+router.post('/update-shipping', (req, res) => {
+    const shippingLocation = req.body.shipping_location;
+
+    if (!shippingLocation) {
+        res.status(400).send('Shipping location is required');
+        return;
+    }
+
+    // Query the database for the shipping cost
+    db.query('SELECT cost FROM shipping_costs WHERE location = ?', [shippingLocation], (err, results) => {
+        if (err) {
+            console.error('Error retrieving shipping cost:', err);
+            res.status(500).send('Error retrieving shipping cost');
+            return;
         }
 
+        if (results.length === 0) {
+            res.status(404).send('Shipping location not found');
+            return;
+        }
+
+        const shippingCost = results[0].cost;
+
+        req.session.shippingLocation = shippingLocation;
+        req.session.shippingCost = shippingCost;
+
+        // Update cart total
+        const cart = req.session.cart || [];
         calculateTotal(cart, req);
-        res.redirect('/cart');
-})
 
+        // Redirect to the referring page or a default page
+        const referer = req.get('Referer') || '/default-page'; // Ensure fallback URL
+        res.redirect(referer);
+    });
+});
 
 //...../Checkout Page
 router.get('/checkout',loggedIn, (req, res) => {
@@ -498,14 +539,6 @@ router.post('/validate-form', validationRules, (req, res) => {
     res.sendStatus(200); // Success status code
 });
 
-
-///test
-router.get('/loadData', (req,res) => {
-    res.render('pages/payment')
-})
-router.post('/loadData', (req, res) => {
-    
-});
 //the end
 
 module.exports =router;
