@@ -6,7 +6,8 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     routes = require('./routes/router'),
     db = require('./routes/db'),
-    session = require('express-session');
+    session = require('express-session'),
+    axios = require('axios');
 
 
 app.set('view engine', 'ejs');

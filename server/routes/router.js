@@ -7,7 +7,9 @@ const express =require('express'),
     loggedIn = require('../controllers/loggedIn'),
     logout = require('../controllers/logOut'),
     Product =require('../models/products.js'),
-    dotenv = require('dotenv').config();
+    dotenv = require('dotenv').config(),
+    nodemailer = require('nodemailer'),
+    axios = require('axios');
 
 //..../user/
 router.get('/login',(req,res) => {
@@ -371,15 +373,14 @@ router.post('/check-payment/', loggedIn, async (req, res) => {
             res.json({status: 'internal'})
         }
 });
-//..../adding orderr to db and sending mail
+
 router.post('/place_order', loggedIn, (req, res) => {
     try {
-        // data goes to mysql
-        const userId = req.user.id;       
+        const userId = req.user.id;
 
         const checkout_data = {
             name: req.user.fullName,
-            email:req.user.email,
+            email: req.user.email,
             phone: req.body.phone,
             country: req.body.country,
             address: req.body.address,
@@ -393,25 +394,23 @@ router.post('/place_order', loggedIn, (req, res) => {
             quantity: 0
         };
 
-        console.log('Details',req.session);
+        console.log('Details:', req.session);
         console.log('User:', req.user);
         console.log('User ID:', userId);
-
         console.log(req.body);
+
         if (checkout_data.cart.length > 0) {
             const productDetails = checkout_data.cart.map(product => `${product.name} (Quantity: ${product.quantity})`).join(', ');
             checkout_data.product = productDetails;
             checkout_data.quantity = checkout_data.cart.reduce((total, product) => total + product.quantity, 0);
         }
 
-        db.connect((err) => {
-            if (err) {
-                console.error(err);
-            } else {
+        const insertOrder = async () => {
+            return new Promise((resolve, reject) => {
                 const query = `
                     INSERT INTO orders (name, email, phone, country, address, state, zip_code, status, date, product, quantity, cost, customer_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    
+
                 const values = [
                     checkout_data.name,
                     checkout_data.email,
@@ -427,71 +426,108 @@ router.post('/place_order', loggedIn, (req, res) => {
                     checkout_data.cost,
                     userId
                 ];
-    
+
                 db.query(query, values, (err, result) => {
                     if (err) {
                         console.error('Error inserting data into the database:', err);
-                        res.status(500).json('Error inserting data into the database');
+                        reject(err);
                     } else {
                         console.log('Customer data successfully added to the database');
-                        res.json('Customer data added successfully');
+                        resolve(result);
                     }
                 });
-            }
-        });
+            });
+        };
 
-        //then to mails
-                    const nodemailer = require('nodemailer')
-                    const transporter = nodemailer.createTransport({
-                        service: 'Gmail',
-                        auth: {
-                            user: process.env.myEmail,
-                            pass:process.env.myEmailPass,
-                        }
-                    })
-                    const productDetails = checkout_data.cart.map(product => `${product.name} (Quantity: ${product.quantity})`).join(', ');
+        const sendConfirmationEmail = async () => {
+            const transporter = nodemailer.createTransport({
+                service: 'Gmail',
+                auth: {
+                    user: process.env.myEmail,
+                    pass: process.env.myEmailPass,
+                }
+            });
 
-                    const mailOptions = {
-                        from: process.env.myEmail,
-                        to: 'akereabdulraheem@gmail.com, akunayo7@gmail.com',
-                        subject: 'ALERT: NEW ORDER',
-                        text:`New order details:
-                        Date: ${checkout_data.date}
+            const productDetails = checkout_data.cart.map(product => `${product.name} (Quantity: ${product.quantity})`).join(', ');
 
-                        *CUSTOMER DETAILS*
-                        Name: ${checkout_data.name}
-                        Email: ${checkout_data.email}
-                        Phone Number: ${checkout_data.phone}
+            const mailOptions = {
+                from: process.env.myEmail,
+                to: 'akereabdulraheem@gmail.com, shopkunayo@gmail.com, akunayo7@gmail.com',
+                subject: 'ALERT: NEW ORDER',
+                text: `New order details:
+                Date: ${checkout_data.date}
 
-                        *SHIPPING DETAILS*
-                        Country: ${checkout_data.country}
-                        Address: ${checkout_data.address}
-                        Zip Code :${checkout_data.zip_code}
-                        State: ${checkout_data.state}
-                        Logistic: 
+                *CUSTOMER DETAILS*
+                Name: ${checkout_data.name}
+                Email: ${checkout_data.email}
+                Phone Number: ${checkout_data.phone}
 
-                        *PRODUCT INFO*
-                        Status: ${checkout_data.status}
-                        Cost: ${checkout_data.cost}
-                        Products: ${productDetails}`
+                *SHIPPING DETAILS*
+                Country: ${checkout_data.country}
+                Address: ${checkout_data.address}
+                Zip Code: ${checkout_data.zip_code}
+                State: ${checkout_data.state}
+                Logistic:
+
+                *PRODUCT INFO*
+                Status: ${checkout_data.status}
+                Cost: ${checkout_data.cost}
+                Products: ${productDetails}`
+            };
+
+            return new Promise((resolve, reject) => {
+                transporter.sendMail(mailOptions, (err, info) => {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                    } else {
+                        console.log('Email sent');
+                        resolve(info);
                     }
+                });
+            });
+        };
 
-                    transporter.sendMail(mailOptions, (err, info) => {
+        const updateProductQuantities = async () => {
+            // Create an array of update promises
+            const updatePromises = checkout_data.cart.map(product => {
+                return new Promise((resolve, reject) => {
+                    const query = 'UPDATE products SET quantity = quantity - ? WHERE id = ?';
+                    db.query(query, [product.quantity, product.id], (err, results) => {
                         if (err) {
-                            console.log(err);
-                            res.status(500).json('Error sending email');
+                            console.error(`Error updating product ${product.id}:`, err.message);
+                            reject(err);
                         } else {
-                            console.log('Email sent');
-                            res.json('Email sent successfully');
+                            console.log(`Product ${product.id} quantity updated`);
+                            resolve(results);
                         }
-                    })
+                    });
+                });
+            });
+
+            // Wait for all update promises to complete
+            return Promise.all(updatePromises);
+        };
+
+        const processOrder = async () => {
+            try {
+                await insertOrder();
+                await sendConfirmationEmail();
+                await updateProductQuantities();
+                res.json('Order placed successfully and products updated');
+            } catch (error) {
+                console.error('Error processing order:', error.message);
+                res.status(500).json('Error processing order');
+            }
+        };
+
+        processOrder();
     } catch (error) {
-        console.log('could not register order data on database')
-        console.log('Request body:',req.body);
+        console.log('Could not register order data on database');
+        console.log('Request body:', req.body);
         console.log('User:', req.user);
-        console.log('User ID:', userId);
-                    
-    }   
+        res.status(500).json('Internal server error');
+    }
 });
 
 //............../checkout form validation/
