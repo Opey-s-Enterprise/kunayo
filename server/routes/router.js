@@ -55,11 +55,41 @@ router.get('/myAccount', loggedIn, (req, res) => {
  
 
 //.../product/
-router.get('/', (req,res) => {
-    db.query('select * from products', (err, result) => {
-    res.render('pages/Home')
+router.get('/', (req, res) => {
+    const query = `
+        SELECT * FROM (
+            SELECT *, 
+                   ROW_NUMBER() OVER (PARTITION BY type ORDER BY id) as rn
+            FROM products
+        ) as ranked
+        WHERE rn <= 2
+    `;
+
+    db.query(query, (err, result) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        // Group products by category
+        const productsByCategory = result.reduce((acc, product) => {
+            const { type } = product;
+            if (!acc[type]) {
+                acc[type] = [];
+            }
+            acc[type].push(product);
+            return acc;
+        }, {});
+
+        res.render('pages/Home', { productsByCategory });
+    });
 });
-}); 
+
+// router.get('/', (req,res) => {
+//     db.query('select * from products', (err, result) => {
+//     res.render('pages/Home')
+//     });
+// });
+
 router.get('/accessories', (req,res) => {
     db.query('select * from products', (err, result) => {
         res.render('product/product_page', {result:result, pagetitle: 'Accessories', pageDescription: 'Accessories'})
@@ -89,6 +119,9 @@ router.get('/outerwear', (req,res) => {
     db.query(`select * from products where type ='outwear'`, (err, result) => {
         res.render('product/product_page', {result:result, pagetitle: 'Outerwear', pageDescription: 'Outerwear'})
     });
+});
+router.get('/lookbook', (req,res) => {
+    res.render('pages/lookbook', {pagetitle: 'lookbook', pageDescription: 'lookbook'})
 });
 router.get('/product-details', (req, res) => {
     const productId = req.query.product_id;

@@ -29,9 +29,23 @@ const pageDescription = 'About';
             <h3><span class="underline-effect">T-shirts</span></h3>
         </div>
 
-        <div>
-        
-        <div>
+        <div class="row">
+            <% if (productsByCategory['T-shirts']) { %>
+                <% productsByCategory['T-shirts'].forEach(item => { %>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
+                        <div class="product-item">
+                                <a href="/product-details?product_id=<%= item.id %>">
+                                    <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
+                                </a>
+                                <h3><%= item.name %></h3>
+                                <p>NGN <%= item.price %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No T-shirts available.</p>
+            <% } %>
+        </div>
 
         </div>
 
@@ -49,9 +63,23 @@ const pageDescription = 'About';
             <h3><span class="underline-effect">Pants</span></h3>
         </div>
 
-        <div>
-        
-        <div>
+        <div class="row">
+            <% if (productsByCategory['pants']) { %>
+                <% productsByCategory['pants'].forEach(item => { %>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
+                        <div class="product-item">
+                                <a href="/product-details?product_id=<%= item.id %>">
+                                    <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
+                                </a>
+                                <h3><%= item.name %></h3>
+                                <p>NGN <%= item.price %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No T-shirts available.</p>
+            <% } %>
+        </div>
 
         </div>
 
@@ -68,9 +96,23 @@ const pageDescription = 'About';
             <h3><span class="underline-effect">Outwears</span></h3>
         </div>
 
-        <div>
-        
-        <div>
+        <div class="row">
+            <% if (productsByCategory['Outwear']) { %>
+                <% productsByCategory['Outwear'].forEach(item => { %>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
+                        <div class="product-item">
+                                <a href="/product-details?product_id=<%= item.id %>">
+                                    <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
+                                </a>
+                                <h3><%= item.name %></h3>
+                                <p>NGN <%= item.price %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No Outwear available.</p>
+            <% } %>
+        </div>
 
         </div>
 
@@ -88,9 +130,23 @@ const pageDescription = 'About';
             <h3><span class="underline-effect">Accessories</span></h3>
         </div>
 
-        <div>
-        
-        <div>
+        <div class="row">
+            <% if (productsByCategory['Bag']) { %>
+                <% productsByCategory['Bag'].forEach(item => { %>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
+                        <div class="product-item">
+                                <a href="/product-details?product_id=<%= item.id %>">
+                                    <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
+                                </a>
+                                <h3><%= item.name %></h3>
+                                <p>NGN <%= item.price %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No T-shirts available.</p>
+            <% } %>
+        </div>
 
         </div>
 
@@ -106,9 +162,18 @@ const pageDescription = 'About';
     <!-- lookbook -->
         <div class="cont text-center mt-1 pt-5">
         <h3><span class="underline-effect">Lookbook</span></h3>
+        <div class="col-md-3 col-xl-8 text-center d-flex d-sm-flex d-md-flex justify-content-center align-items-center mx-auto justify-content-md-start align-items-md-center justify-content-xl-center"></div>
+            <div>
+                <button class="btn fs-5 me-2 py-2 px-4" type="button" style="background-color: black; color: white; margin-right: 3px; padding-right: 0px;">
+                    <a class="nav-link" href="/lookbook" style="color: white;">view all</a>
+                </button>
+            </div>
+        </div>
     </div>
 
 
 <!--<%- include ('../layout/loading') %>-->
 <%- include ('../layout/footer') %>
 <%- include ('../layout/scripts') %>
+<!-- Debug: Log available categories -->
+<!-- <pre>Available Categories: <%= JSON.stringify(Object.keys(productsByCategory), null, 2) %></pre> -->
