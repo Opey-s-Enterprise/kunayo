@@ -25,17 +25,17 @@ const pageDescription = 'About';
                
     <!-- T-shirts -->
     <div> 
-        <div class="cont text-center mt-1 pt-5">
+        <div class="cont text-center mt-1 pt-5 ">
             <h3><span class="underline-effect">T-shirts</span></h3>
         </div>
         
         <br>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center p-3">
             <% if (productsByCategory['T-shirts']) { %>
                 <% productsByCategory['T-shirts'].forEach(item => { %>
                     <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
-                        <div class="product-item">
+                        <div class="product-item text-center">
                                 <a href="/product-details?product_id=<%= item.id %>">
                                     <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
                                 </a>
@@ -65,11 +65,11 @@ const pageDescription = 'About';
             <h3><span class="underline-effect">Pants</span></h3>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center p-3">
             <% if (productsByCategory['pants']) { %>
                 <% productsByCategory['pants'].forEach(item => { %>
                     <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
-                        <div class="product-item">
+                        <div class="product-item text-center">
                                 <a href="/product-details?product_id=<%= item.id %>">
                                     <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
                                 </a>
@@ -98,11 +98,11 @@ const pageDescription = 'About';
             <h3><span class="underline-effect">Outwears</span></h3>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center p-3">
             <% if (productsByCategory['Outwear']) { %>
                 <% productsByCategory['Outwear'].forEach(item => { %>
                     <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
-                        <div class="product-item">
+                        <div class="product-item text-center">
                                 <a href="/product-details?product_id=<%= item.id %>">
                                     <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
                                 </a>
@@ -132,11 +132,11 @@ const pageDescription = 'About';
             <h3><span class="underline-effect">Accessories</span></h3>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center p-3">
             <% if (productsByCategory['Bag']) { %>
                 <% productsByCategory['Bag'].forEach(item => { %>
                     <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
-                        <div class="product-item">
+                        <div class="product-item text-center">
                                 <a href="/product-details?product_id=<%= item.id %>">
                                     <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
                                 </a>
