@@ -4,26 +4,15 @@
 <div class="container">
     <%- include('../layout/subheaders', {pageDescription }) %>
 </div>
-<div class="container-fluid">
+<div class=".container-fluid">
     <div class="row text-center">
         <% result.forEach(function(item) { %>
-        <div class="col-6 col-sm-4 col-md-3 col-lg-4 margin position-relative">
-            <div class="product-item">                
-                <% if(item.quantity === 0) { %>
-                    <a href="/product-details?product_id=<%= item.id %>">
-                        <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
-                    </a>
-                    <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center z-index: 1000;">
-                        <img src="/images/soldOut.png" alt="Sold Out" class="sold-out">
-                    </div>
-                    <% } else { %>
-                    <a href="/product-details?product_id=<%= item.id %>">
-                        <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
-                    </a>
-                    <% } %>
-
-                <% if(item.sale_price) { %>
-                <h3>NGN<strong class="red"><%= item.sale_price %></strong></h3>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 margin">
+            <div>
+                <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="<%= item.name %>" class="img-fluid">
+                
+                <% if(item.sale_price){ %>
+                <h3>NGN<strong class="red"><%= item.sale_price %></strong></h3>             
                 <h3 style="text-decoration: line-through;">NGN<strong class="red"><%= item.price %></strong></h3>
                 <% } else { %>
                     <h3>NGN<strong class="red"><%= item.price %></strong></h3>

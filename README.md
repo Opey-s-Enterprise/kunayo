@@ -1,4 +1,6 @@
 # Made_by_ky
+A shopping website
+Made_by_ky
 
 A shopping website for the brand-Made_by_ky
 
@@ -7,7 +9,7 @@ Created on 26.09.2023
 figma file - https://www.figma.com/file/PLVBOkSdOE4vBFXzbMzrMm/madebyky?type=design&node-id=0-1&mode=design
 
 stack deployed includes:
-- Html
+- Html[ejs]
 - js
 - css
 - mysql
@@ -15,7 +17,7 @@ stack deployed includes:
 - apache
 - paystack
 - google analytics
-- aws (may change)
+- azure
 
 * Notes
 This repo shall have 2 branches namely
