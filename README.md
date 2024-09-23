@@ -1,8 +1,7 @@
-# Made_by_ky
+# kunayo
 A shopping website
-Made_by_ky
 
-A shopping website for the brand-Made_by_ky
+A shopping website for the brand- Kunayo
 
 Created on 26.09.2023
 
@@ -26,4 +25,3 @@ This repo shall have 2 branches namely
 * debug- In a case of bug encounter the files shall be moved here to fix the error, and the production branch shall be reversed to the earlier version where it worked perfectly.
 
 * The files
--loading_page
