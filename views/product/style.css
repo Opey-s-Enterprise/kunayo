@@ -1,0 +1,17 @@
+/* Ensure product images scale properly */
+.product-item img {
+    width: 100%;
+    height: auto;
+}
+
+/* Margin adjustments */
+.margin {
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    .product-item {
+        padding: 10px;
+    }
+}

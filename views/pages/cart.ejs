@@ -1,0 +1,270 @@
+<%
+const pagetitle = 'Cart';
+const pageDescription = 'Your Cart';
+%>
+
+<%- include ('../layout/header', { pagetitle }) %>
+<%- include ('../layout/nav') %>
+
+<div class="container">
+    <%- include('../layout/subheaders', {pageDescription }) %>
+</div>
+
+    
+    <div>        
+        <section class="cart container mt-2 my-3 py-5">
+            
+            <table class="pt-5 table table-striped text-center" style="width: 100%;">         
+             <% if (cart && cart.length > 0) { %>               
+         
+                 <% cart.forEach(function(product) { %>                          
+                     <tr>
+                         <!-- product image -->
+                         <td>
+                             <div>
+                                 <img src="<%= product.image %>" alt="<%= product.name %>" class="rounded img-fluid">
+                             </div>
+                         </td>
+         
+                         <!-- product name -->
+                         <td>
+                             <p> <%= product.name %></p>
+                         </td>
+         
+                         <!-- product price -->
+                         <td>
+                             <% if(product.sale_price){ %>
+                                 <small><span>NGN </span><%= product.sale_price %></small>
+                             <% } else{ %>
+                                 <small><span>NGN </span><%= product.price %></small>
+                             <% } %> 
+                         </td>
+         
+                         <!-- edit buttons -->
+                         <td>
+                             <form method="post" action="/edit_product_quantity">
+                                 <div class="row">
+                                     <div class="col">
+                                         <input type="hidden" value="<%= product.id %>" name="id">
+                                         <input type="submit" value="-" name="decreaseProductQuantity">
+                                         <input type="text" name="quantity" value="<%= product.quantity %>" readonly class="text-center" style="height:35px; width:30px" >
+                                         <input type="submit" value="+" name="increaseProductQuantity">
+                                     </div>
+                                 </div>
+                             </form>
+                         </td>
+         
+                         <!-- price -->
+                         <td>
+                             <% if(product.sale_price){ %>
+                                 <span class="product-price">NGN <%= product.sale_price * product.quantity %></span>
+                             <% } else { %>
+                                 <span class="product-price">NGN <%= product.price * product.quantity %></span>
+                             <% } %>
+                         </td>
+         
+                         <!-- remove button -->
+                         <td>
+                             <form method="post" action="/remove_product">
+                                 <input type="hidden" name="id" value="<%= product.id %>">
+                                 <input type="submit" name="remove_btn" class="remove-btn" value="remove">
+                             </form>
+                         </td>
+                     </tr>                     
+                 <% }) %>
+                                <% if(status === "loggedIn"){ %>
+                                    <hr style="color: var(--bs-danger);height: 1px;"/>
+                                                      
+                                    <div class="cart-total">
+                                        <table class='d-flex justify-content-center align-items-center' style="width: 100%;">
+                                            <thead>
+                                                <hr style="color: var(--bs-danger);height: 1px;border-width: 5zpx;" />
+                                            </thead>
+
+                                            <div class="container" style="border-radius: 20px; margin-top: 47px;">
+                                                <div style="background: var(--bs-gray-300); border-radius: 20px; border-color: var(--bs-gray-100); padding-left: 16px; padding-right: 11px;">
+                                                    <div style="border-radius: 15px; padding-bottom: 0px; margin-bottom: 0px; margin-top: -14px;">
+                                                        <p style="margin-bottom: 0px; padding-top: 14px;">Shipping Mode</p>
+                                                        <div style="margin-right: 159px; padding-right: 26px; margin-top: 18px; padding-bottom: 0px;">
+                                                            <form id="shipping-form" method="post" action="/update-shipping">
+                                                                <div class="form-check">
+                                                                    <input type="radio" id="lagos-park" name="shipping_location" value="lagos_park" <% if (shippingLocation === 'lagos_park') { %> checked <% } %> onchange="submitForm()" class="form-check-input" />
+                                                                    <label class="form-check-label" for="lagos-park">Lagos park delivery: NGN 2500</label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                    <input type="radio" id="lagos-doorstep" name="shipping_location" value="lagos_doorstep" <% if (shippingLocation === 'lagos_doorstep') { %> checked <% } %> onchange="submitForm()" class="form-check-input" />
+                                                                    <label class="form-check-label" for="lagos-doorstep">Lagos doorstep delivery: NGN 5000</label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                    <input type="radio" id="ibadan" name="shipping_location" value="ibadan" <% if (shippingLocation === 'ibadan') { %> checked <% } %> onchange="submitForm()" class="form-check-input" />
+                                                                    <label class="form-check-label" for="ibadan">Ibadan delivery: NGN 1500</label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                    <input type="radio" id="other-states" name="shipping_location" value="other_states" <% if (shippingLocation === 'other_states') { %> checked <% } %> onchange="submitForm()" class="form-check-input" />
+                                                                    <label class="form-check-label" for="other-states">Other states delivery: NGN 3000</label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                    <input type="radio" id="international" name="shipping_location" value="international" <% if (shippingLocation === 'international') { %> checked <% } %> onchange="submitForm()" class="form-check-input" />
+                                                                    <label class="form-check-label" for="international">International (Packages below 1.5kg): $50</label>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <div style="margin-top: 0px; margin-bottom: -1px;">
+                                                        <div class="d-flex justify-content-end" style="border-radius: 15px; color: var(--bs-secondary-color); margin-top: -114px; padding-bottom: 0px;">
+                                                            <p style="margin-right: 45px;">Subtotal:</p>
+                                                            <p style="margin-right: 25px;">NGN<%= subTotal %></p>
+                                                        </div>
+                                                        <div class="d-flex justify-content-end" style="border-radius: 15px; color: var(--bs-secondary-color);">
+                                                            <p style="margin-right: 45px;">Shipping:</p>
+                                                            <p style="margin-right: 25px;">NGN </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-end" style="margin-left: 85px; padding-left: 1px;">
+                                                        <button class="btn d-flex justify-content-end justify-content-sm-end checkout-btn" style="background: var(--bs-border-color-translucent); border-color: var(--bs-form-invalid-color); border-radius: 50px; padding-top: 2px; padding-bottom: 2px; padding-right:-5px; margin-right: 28px; margin-top: -1px; margin-bottom: 15px; margin-left: 10px; padding-left: 0px;"><form method="get" action="/checkout">
+                                                            <input type="submit" class="btn checkout-btn" id="total" readonly value="Checkout  NGN <%= total %>"> 
+                                                        </form></button></div>
+                                                            
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- <div class="container" style="margin-top: 28px;background: var(--bs-gray-200);border-radius: 20px;">
+                                                <div style="/background: var(--bs-gray-300);/border-radius: 15px;padding-bottom: 0px;margin-bottom: 0px;margin-top: -14px;">
+                                                    <p style="/border-color: var(--bs-secondary-bg);/margin-bottom: 0px;padding-top: 14px;">Shipping Mode</p>
+                                                </div> -->
+                                                    <!-- <form  id="shipping-form" method="post" action="/update-shipping">
+                                                        <tr>
+                                                            <td style="display: flex; justify-content: flex-start; align-items: center;">
+                                                                <input type="radio" id="lagos-park" name="shipping_location" value="lagos_park" <% if (shippingLocation === 'lagos_park') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                <label for="lagos-park">Lagos park delivery: NGN2500</label>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="display: flex; align-items: center;">
+                                                                <input type="radio" id="lagos-doorstep" name="shipping_location" value="lagos_doorstep" <% if (shippingLocation === 'lagos_doorstep') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                <label for="lagos-doorstep">Lagos doorstep delivery: NGN5000</label>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="display: flex; align-items: center;">
+                                                                <input type="radio" id="ibadan" name="shipping_location" value="ibadan" <% if (shippingLocation === 'ibadan') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                <label for="ibadan">Ibadan delivery: NGN1500</label>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="display: flex; align-items: center;">
+                                                                <input type="radio" id="other-states" name="shipping_location" value="other_states" <% if (shippingLocation === 'other_states') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                <label for="other-states">Other states delivery: NGN3000</label>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="display: flex; align-items: center;">
+                                                                <input type="radio" id="international" name="shipping_location" value="international" <% if (shippingLocation === 'international') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                <label for="international">International (Packages below 1.5kg): $50</label>
+                                                            </td>
+                                                        </tr>
+                                                    </form> -->
+                                                <!-- <div class="d-flex justify-content-end" style="/background: var(--bs-gray-300);/border-radius: 15px;/color: var(--bs-secondary-color);/">
+                                                    <p style="margin-right: 45px;">Subtotal: </p>
+                                                    <p style="margin-right: 25px;">NGN</p>
+                                                </div>
+                                                <div class="d-flex justify-content-end" style="/background: var(--bs-gray-300);/border-radius: 15px;/color: var(--bs-secondary-color);/">
+                                                    <p style="margin-right: 45px;">Subtotal: </p>
+                                                    <p style="margin-right: 25px;">NGN</p>
+                                                </div>
+                                                <div class="d-flex justify-content-end" style="margin-left: 85px;padding-left: 1px;"><button class="btn d-flex justify-content-end justify-content-sm-end checkout-btn" style="background: var(--bs-border-color-translucent);border-color: var(--bs-form-invalid-color);border-radius: 50px;padding-top: 2px;padding-bottom: 3px;padding-right: 13px;margin-right: 1px;margin-top: -1px;margin-bottom: 15px;margin-left: 18px;padding-left: 0px;"><input id="total" class="btn checkout-btn" type="submit" readonly value="Checkout  NGN &lt;%= total %&gt;" style="margin-top: -6px;padding-bottom: 2px;transform: scale(0.80);padding-left: 0px;margin-right: -39px;" /></button></div>
+                                            </div> -->
+
+                                            <!-- <div class="container">
+                                                <div style="background: var(--bs-gray-300);border-radius: 15px;">
+                                                    <p style="padding-top: 13px;padding-left: 17px;">Shipping Mode</p>
+
+                                                    <div class="container" style="display: flex; justify-content: start;">
+                                                        <form id="shipping-form" method="post" action="/update-shipping">
+                                                            <tr>
+                                                                <td style="display: flex; justify-content: flex-start; align-items: center;">
+                                                                    <input type="radio" id="lagos-park" name="shipping_location" value="lagos_park" <% if (shippingLocation === 'lagos_park') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                    <label for="lagos-park">Lagos park delivery: NGN2500</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="display: flex; align-items: center;">
+                                                                    <input type="radio" id="lagos-doorstep" name="shipping_location" value="lagos_doorstep" <% if (shippingLocation === 'lagos_doorstep') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                    <label for="lagos-doorstep">Lagos doorstep delivery: NGN5000</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="display: flex; align-items: center;">
+                                                                    <input type="radio" id="ibadan" name="shipping_location" value="ibadan" <% if (shippingLocation === 'ibadan') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                    <label for="ibadan">Ibadan delivery: NGN1500</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="display: flex; align-items: center;">
+                                                                    <input type="radio" id="other-states" name="shipping_location" value="other_states" <% if (shippingLocation === 'other_states') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                    <label for="other-states">Other states delivery: NGN3000</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="display: flex; align-items: center;">
+                                                                    <input type="radio" id="international" name="shipping_location" value="international" <% if (shippingLocation === 'international') { %> checked <% } %> onchange="submitForm()" style="margin-right: 10px;">
+                                                                    <label for="international">International (Packages below 1.5kg): $50</label>
+                                                                </td>
+                                                            </tr>
+                                                        </form>                                                
+                                                    </div>
+
+                                                    <p style="margin-bottom: 0px;padding-left: 16px;">paragraph
+                                                    </p>
+                                                    <p style="margin-bottom: 0px;padding-left: 16px;">Paragraph</p>
+                                                    <p style="margin-bottom: 0px;padding-left: 16px;">Paragraph</p>
+                                                    <p style="padding-left: 16px;margin-bottom: -1px;padding-bottom: 16px;">Paragraph</p>
+                                                    
+                                                    <div class="d-flex justify-content-end" style="background: var(--bs-gray-300);border-radius: 15px;padding-bottom: 0px;padding-top: 0px;margin-bottom: 0px;">
+                                                        <p style="margin-bottom: -1px;padding-left: 0px;padding-bottom: 3px;margin-top: -148px;padding-right: 30px;">Subtotal: </p>
+                                                        <p style="margin-bottom: -1px;padding-left: 0px;padding-bottom: 3px;padding-right: 22px;margin-top: -148px;">NGN<%= subTotal %></p>
+                                                    </div>
+                                                    
+                                                    <div class="d-flex justify-content-end" style="background: var(--bs-gray-300);border-radius: 15px;padding-bottom: 0px;padding-top: 0px;margin-bottom: 0px;">
+                                                        <p style="margin-bottom: -1px;padding-left: 0px;padding-bottom: 3px;margin-top: -148px;padding-top: 42px;padding-right: 30px;">shipping </p>
+                                                        <p style="margin-bottom: -1px;padding-left: 0px;padding-bottom: 3px;padding-right: 22px;margin-top: -148px;padding-top: 42px;">Paragraph</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-end" style="background: var(--bs-gray-300);border-radius: 15px;padding-bottom: 0px;padding-top: 0px;margin-top: -80px;margin-bottom: 10px;"><button class="btn checkout-btn" style="background: var(--bs-border-color-translucent);border-color: var(--bs-form-invalid-color);border-radius: 50px;margin-left: 37px;padding-top: 2px;padding-bottom: 3px;padding-right: 13px;padding-left: 13px;margin-right: 9px;margin-top: 14px;margin-bottom: 136px;"><form method="get" action="/checkout">
+                                                        <input type="submit" class="btn checkout-btn" id="total" readonly value="Checkout  NGN <%= total %>"> 
+                                                    </form></button></div>
+                                                </div>
+                                            </div>                                             -->
+                                        </table>
+                                    </div>
+         
+                    <% } else { %>
+                        <div style="display: flex; justify-content: center;">
+                            <p>Please <a href="/login">Login</a> to checkout</p>
+                        </div>
+                        <hr style="color: var(--bs-danger);height: 1px;"/>
+                    <% } %>
+         
+             <% } else { %>
+                 <div style="display: flex; justify-content: center;">
+                     <p>You have no items in your shopping cart.</p>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                     <a href="/new_arrival">Go to shop</a>
+                 </div>
+             <% } %>
+             </table>
+         </div>
+         </section>
+    </div>
+    
+<script>
+    function submitForm() {
+        document.getElementById('shipping-form').submit();
+    }
+</script>
+
+<%- include ('../layout/footer') %>
+<%- include ('../layout/scripts') %>
