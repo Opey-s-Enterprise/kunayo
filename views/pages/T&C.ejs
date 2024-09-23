@@ -1,12 +1,9 @@
-<%
-<!-- variables tabs -->
-const pagetitle ='Terms and Conditions';
-const pageDescription = 'Terms and Conditions';
-%>
+<%- include('../layout/header', {pagetitle }) %>
+<%- include('../layout/nav') %>
 
-<%- include ('../layout/header', {pagetitle }) %>
-
-<%- include ('../layout/nav') %>
+<div class="container">
+    <%- include('../layout/subheaders', {pageDescription }) %>
+</div>
 
     <div>
         <h3>1. Acceptance of Terms</h3>

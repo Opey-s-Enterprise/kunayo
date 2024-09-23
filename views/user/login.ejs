@@ -8,27 +8,32 @@ const pageDescription = 'Login';
 
 <%- include ('../layout/nav') %>
 
+
 <div class="container">
     <%- include('../layout/subheaders', {pageDescription }) %>
-        <form action="/" method="post" id="login-form">
-            <div class="input-group">
-                <input type="text" class="rounded-pill" id="username" name="username" placeholder="Email" required>
-            </div>
-            <div class="input-group">
-                <input type="password" class="rounded-pill" id="password" name="password" placeholder="Password" required>
-            </div>
+    <section class="position-relative py-4 py-xl-5">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-6 col-xl-4">
+                    <div class="card mb-5" style="border-color: white;">
+                        <div class="card-body d-flex flex-column align-items-center" style="border-style: none;border-color: var(--bs-body-bg);">
+                            <form class="text-center" method="post" action="/" id="login-form">
+                                <div class="mb-3" style="margin-left: -25px;padding-right: 0px;margin-right: -18px;"><input class="form-control" type="email" id="username" name="username" placeholder="Email" style="border-radius: 90px;--bs-body-bg: var(--bs-gray-400);" /></div>
+                                
+                                <div class="mb-3" style="margin-right: -18px;margin-left: -27px;"><input class="form-control" type="password" id="password" name="password" placeholder="Password" style="border-radius: 90px;margin-right: -1px;--bs-body-bg: var(--bs-gray-300);" /></div>
 
-            <div class="alert alert-danger rounded-pill" role="alert" id="error" style="display: none;"></div>
+                                    <div class="alert alert-danger rounded-pill" role="alert" id="error" style="display: none;"></div>
 
-            <div class="alert alert-success rounded-pill" role="alert" id="success" style="display: none;"></div>
-
-            <div class="alpha">
-                <button type="button" class="btn btn-link rounded-pill" id="signup"><a href="/signup">Sign Up</a></button>
-                <br>
-                <button type="button" class="btn btn-link rounded-pill" id="login">log in</button>
+                                    <div class="alert alert-success rounded-pill" role="alert" id="success" style="display: none;"></div>
+                                
+                                <div class="mb-3" id="signup" style="margin-right: 60px;margin-left: 54px;"><button class="btn d-block w-100" type="submit" style="background: var(--bs-black);border-radius: 70px;margin-right: 39px;padding-right: 20px;padding-left: 25px;"><a href="/signup">Sign Up</a></button></div>
+                                
+                                <div class="mb-3" style="margin-right: 58px;margin-left: 61px;margin-top: -8px;margin-bottom: -11px;"><button class="btn btn-primary d-block w-100" type="submit" id="login" style="border-color: var(--bs-form-invalid-border-color);box-shadow: 0px 0px var(--bs-form-invalid-border-color);background: var(--bs-card-bg);color: var(--bs-danger);border-radius: 68px;margin-bottom: -7px;padding-top: 0px;">Log in</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-        </form>
+    </section>
 </div>
 
 <%- include ('../layout/footer') %>

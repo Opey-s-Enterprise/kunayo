@@ -154,7 +154,7 @@ router.get('/product-details', (req, res) => {
 
 //..../pages
 router.get('/faq', (req,res) => {
-    res.render('pages/FAQs')
+    res.render('pages/FAQs',{pagetitle: 'FAQs', pageDescription: 'FAQs'})
 });
 router.get('/about', (req,res) => {
     res.render('pages/About')
@@ -163,10 +163,10 @@ router.get('/contact_us', (req,res) => {
     res.render('pages/contact-us')
 });
 router.get('/t&c', (req,res) => {
-    res.render('pages/T&C')
+    res.render('pages/T&C', {pagetitle: 'T&C', pageDescription: 'Terms and Conditions'})
 });
 router.get('/delivery', (req,res) => {
-    res.render('pages/delivery')
+    res.render('pages/delivery',{pagetitle: 'Delivery and Shipping', pageDescription: 'Delivery and Shipping'})
 });
 // Utility Functions
 function isProductInCart(cart, productId) {
